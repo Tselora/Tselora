@@ -1,4 +1,15 @@
-"""Python SDK: emit, batch, transport, decorators.
+"""Python SDK: emit events to the collector."""
 
-Week 2 implementation. Placeholder package only.
-"""
+from sdk.decorators import configure_emitter, get_emitter, run, tool
+from sdk.emitter import EventEmitter
+from sdk.transport import CollectorTransport, Transport
+
+__all__ = [
+    "CollectorTransport",
+    "EventEmitter",
+    "Transport",
+    "configure_emitter",
+    "get_emitter",
+    "run",
+    "tool",
+]

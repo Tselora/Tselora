@@ -1,6 +1,25 @@
-"""Redactor abstraction: strip or mask sensitive fields before persistence.
+"""Redact sensitive fields before persistence.
 
-Not implemented. Users control what they emit; this is not a secret scanner.
-
-See SECURITY.md. Week 1 implements a minimal Redactor protocol.
+This is not a secret scanner. Callers control what they emit. The
+collector applies a Redactor before JSONL append so later policies can
+plug in without changing the emitter-to-transport path.
 """
+
+from __future__ import annotations
+
+from typing import Protocol
+
+from core.events.schema import AgentEvent
+
+
+class Redactor(Protocol):
+    """Transform an event before it is written to the event log."""
+
+    def redact(self, event: AgentEvent) -> AgentEvent: ...
+
+
+class IdentityRedactor:
+    """Pass-through. Replace with a real policy before remote deployment."""
+
+    def redact(self, event: AgentEvent) -> AgentEvent:
+        return event

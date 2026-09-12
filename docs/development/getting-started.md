@@ -1,6 +1,6 @@
 # Getting started
 
-Tselora is in the **architecture / scaffolding** phase. There is no runnable collector or UI yet. This page is how a contributor orients and prepares a machine for Week 1 implementation.
+Tselora is in early implementation. Week 1 step 1 is a vertical slice: `@tool` → HTTP collector → JSONL. There is no ProjectionEngine or UI yet.
 
 ## Prerequisites
 
@@ -19,7 +19,19 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
-Runtime dependencies (Pydantic, FastAPI, Typer, etc.) will be added when implementation starts. `pyproject.toml` currently lists **dev** extras only.
+## Run the collector and example (Week 1 slice)
+
+```bash
+pip install -e ".[dev]"
+
+# Terminal 1 — collector (JSONL under .agent-devtools/)
+TSELOA_DATA_DIR=.agent-devtools uvicorn server.collector.app:app --host 127.0.0.1 --port 8000
+
+# Terminal 2 — instrumented function
+TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/simple_agent.py
+```
+
+Events are appended to `.agent-devtools/runs/<run_id>/events.jsonl`. The CLI (`tselora server`) is not implemented yet.
 
 ## Layout to read first
 
@@ -45,7 +57,7 @@ This directory is gitignored. Do not commit logs.
 pytest
 ```
 
-No tests are implemented yet; Week 1 adds schema, store, and context tests.
+Week 1 step 1 tests cover the event envelope, IDs, sequence, context, decorator, JSONL, collector, and an end-to-end example.
 
 ## UI (future)
 

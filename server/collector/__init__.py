@@ -1,4 +1,5 @@
-"""Local collector ingest.
+"""Local collector process."""
 
-Week 1: app.py — receive events, redact, dedupe, persist.
-"""
+from server.collector.app import app, create_app
+
+__all__ = ["app", "create_app"]
