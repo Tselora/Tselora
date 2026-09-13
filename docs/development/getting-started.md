@@ -31,7 +31,7 @@ TSELOA_DATA_DIR=.agent-devtools uvicorn server.collector.app:app --host 127.0.0.
 TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/simple_agent.py
 ```
 
-Events are appended to `.agent-devtools/runs/<run_id>/events.jsonl`. The CLI (`tselora server`) is not implemented yet.
+Events are appended to `.agent-devtools/runs/<run_id>/events.jsonl`. The SDK queues events and retries HTTP on collector outage, reusing the same `event_id`. The CLI (`tselora server`) is not implemented yet.
 
 ## Layout to read first
 

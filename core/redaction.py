@@ -23,3 +23,16 @@ class IdentityRedactor:
 
     def redact(self, event: AgentEvent) -> AgentEvent:
         return event
+
+
+class KeyRedactor:
+    """Drop listed payload keys. Not a secret scanner."""
+
+    def __init__(self, keys: frozenset[str] | set[str]) -> None:
+        self._keys = frozenset(keys)
+
+    def redact(self, event: AgentEvent) -> AgentEvent:
+        if not event.payload:
+            return event
+        stripped = {k: v for k, v in event.payload.items() if k not in self._keys}
+        return event.model_copy(update={"payload": stripped})

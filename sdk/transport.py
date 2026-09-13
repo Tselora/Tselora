@@ -18,7 +18,7 @@ class Transport(Protocol):
 
 
 class CollectorTransport:
-    """Synchronous POST /v1/events. An async batcher can wrap this later."""
+    """Synchronous POST /v1/events. ``EventBatcher`` wraps this for retries."""
 
     def __init__(
         self,

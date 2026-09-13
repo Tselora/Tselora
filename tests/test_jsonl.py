@@ -38,3 +38,15 @@ def test_jsonl_duplicate_event_id(tmp_path: Path) -> None:
     assert store.append(event) is True
     assert store.append(event) is False
     assert len(store.read(run_id)) == 1
+
+
+def test_jsonl_restart_dedupes_from_disk(tmp_path: Path) -> None:
+    run_id = new_run_id()
+    event = _evt(run_id, 1, event_id="evt_restart")
+    first = JsonlEventStore(tmp_path)
+    assert first.append(event) is True
+    restarted = JsonlEventStore(tmp_path)
+    assert restarted.append(event) is False
+    assert len(restarted.read(run_id)) == 1
+    text = (tmp_path / "runs" / run_id / "events.jsonl").read_text(encoding="utf-8")
+    assert text.count("evt_restart") == 1

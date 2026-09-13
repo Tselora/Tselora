@@ -11,7 +11,7 @@ from core.events.types import SCHEMA_VERSION
 
 
 class EventEmitter:
-    """Assign event_id and sequence, then send via transport."""
+    """Assign event_id and sequence once, then send via transport/batcher."""
 
     def __init__(self, transport: Any) -> None:
         self._transport = transport
@@ -29,7 +29,7 @@ class EventEmitter:
         parent_event_id: str | None = None,
         ctx: ExecutionContext | None = None,
     ) -> AgentEvent:
-        """Build and send one event. Sequence and ids come from the SDK."""
+        """Build one event and hand it off. Retries must reuse this object."""
         context = ctx or require_context()
         if parent_event_id is None:
             parent_event_id = context.current_parent_event_id()
@@ -53,3 +53,15 @@ class EventEmitter:
         )
         self._transport.send(event)
         return event
+
+    def flush(self, timeout: float = 30.0) -> None:
+        """Wait for a batcher to drain. No-op for synchronous transports."""
+        flush = getattr(self._transport, "flush", None)
+        if callable(flush):
+            flush(timeout=timeout)
+
+    def close(self) -> None:
+        """Close a batcher if present. Does not close HTTP clients by default."""
+        closer = getattr(self._transport, "close", None)
+        if callable(closer):
+            closer()

@@ -13,6 +13,7 @@ from core.events.ids import new_run_id
 from core.events.schema import Actor, NodeRef
 from core.events.sequence import SequenceCounter
 from core.events.types import EventType
+from sdk.batcher import EventBatcher
 from sdk.emitter import EventEmitter
 from sdk.transport import DEFAULT_COLLECTOR_URL, CollectorTransport
 
@@ -25,14 +26,18 @@ _emitter: EventEmitter | None = None
 def configure_emitter(emitter: EventEmitter | None) -> None:
     """Install the process-wide emitter (transport), or reset to default."""
     global _emitter
+    previous = _emitter
     _emitter = emitter
+    if previous is not None and previous is not emitter:
+        previous.close()
 
 
 def get_emitter() -> EventEmitter:
     global _emitter
     if _emitter is None:
         base = os.environ.get("TSELOA_COLLECTOR_URL", DEFAULT_COLLECTOR_URL)
-        _emitter = EventEmitter(CollectorTransport(base_url=base))
+        transport = EventBatcher(CollectorTransport(base_url=base))
+        _emitter = EventEmitter(transport)
     return _emitter
 
 
@@ -69,6 +74,10 @@ def run(*, run_id: str | None = None) -> Iterator[str]:
         try:
             ctx.pop()
         except RuntimeError:
+            pass
+        try:
+            emitter.flush()
+        except TimeoutError:
             pass
         reset_context(token)
 
