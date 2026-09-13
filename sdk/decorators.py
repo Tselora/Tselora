@@ -1,4 +1,4 @@
-"""Synchronous @tool decorator and run() context manager."""
+"""Synchronous @agent / @node / @tool / @llm decorators and run()."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ def get_emitter() -> EventEmitter:
 def run(*, run_id: str | None = None) -> Iterator[str]:
     """Bind a run context, emit run.started, then run.completed or run.failed.
 
-    Nested ``@tool`` calls inherit this contextvars context.
+    Nested ``@agent`` / ``@node`` / ``@tool`` / ``@llm`` calls inherit this context.
     """
     rid = run_id or new_run_id()
     ctx = ExecutionContext(run_id=rid, sequence=SequenceCounter())
@@ -86,11 +86,19 @@ def _logical_name(func: Callable[..., object], name: str | None) -> str:
     if name:
         return name
     module = getattr(func, "__module__", "") or ""
-    qual = getattr(func, "__qualname__", getattr(func, "__name__", "tool"))
+    qual = getattr(func, "__qualname__", getattr(func, "__name__", "node"))
     return f"{module}.{qual}" if module else str(qual)
 
 
-def _wrap_tool(func: Callable[P, R], name: str | None) -> Callable[P, R]:
+def _wrap_instrumented(
+    func: Callable[P, R],
+    name: str | None,
+    *,
+    kind: str,
+    started: EventType,
+    completed: EventType,
+    failed: EventType,
+) -> Callable[P, R]:
     logical_id = _logical_name(func, name)
 
     @wraps(func)
@@ -100,11 +108,11 @@ def _wrap_tool(func: Callable[P, R], name: str | None) -> Callable[P, R]:
         ctx = require_context()
         emitter = get_emitter()
         instance_id = ctx.next_instance_id(logical_id)
-        node = NodeRef(id=logical_id, type="tool")
-        actor = Actor(type="tool", id=logical_id)
+        node = NodeRef(id=logical_id, type=kind)
+        actor = Actor(type=kind, id=logical_id)
 
-        started = emitter.emit(
-            EventType.TOOL_STARTED,
+        started_event = emitter.emit(
+            started,
             status="started",
             actor=actor,
             node=node,
@@ -112,7 +120,7 @@ def _wrap_tool(func: Callable[P, R], name: str | None) -> Callable[P, R]:
             ctx=ctx,
         )
         ctx.push(
-            parent_event_id=started.event_id,
+            parent_event_id=started_event.event_id,
             node=node,
             execution_instance_id=instance_id,
         )
@@ -120,7 +128,7 @@ def _wrap_tool(func: Callable[P, R], name: str | None) -> Callable[P, R]:
             result = func(*args, **kwargs)
         except BaseException as exc:
             emitter.emit(
-                EventType.TOOL_FAILED,
+                failed,
                 status="failed",
                 actor=actor,
                 node=node,
@@ -131,7 +139,7 @@ def _wrap_tool(func: Callable[P, R], name: str | None) -> Callable[P, R]:
             raise
         else:
             emitter.emit(
-                EventType.TOOL_COMPLETED,
+                completed,
                 status="completed",
                 actor=actor,
                 node=node,
@@ -143,6 +151,66 @@ def _wrap_tool(func: Callable[P, R], name: str | None) -> Callable[P, R]:
             ctx.pop()
 
     return wrapper
+
+
+@overload
+def agent(func: Callable[P, R]) -> Callable[P, R]: ...
+
+
+@overload
+def agent(*, name: str | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
+
+
+def agent(
+    func: Callable[P, R] | None = None,
+    *,
+    name: str | None = None,
+) -> Callable[P, R] | Callable[[Callable[P, R]], Callable[P, R]]:
+    """Instrument a synchronous function as a logical agent node."""
+
+    def apply(inner: Callable[P, R]) -> Callable[P, R]:
+        return _wrap_instrumented(
+            inner,
+            name,
+            kind="agent",
+            started=EventType.AGENT_STARTED,
+            completed=EventType.AGENT_COMPLETED,
+            failed=EventType.AGENT_FAILED,
+        )
+
+    if func is not None:
+        return apply(func)
+    return apply
+
+
+@overload
+def node(func: Callable[P, R]) -> Callable[P, R]: ...
+
+
+@overload
+def node(*, name: str | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
+
+
+def node(
+    func: Callable[P, R] | None = None,
+    *,
+    name: str | None = None,
+) -> Callable[P, R] | Callable[[Callable[P, R]], Callable[P, R]]:
+    """Instrument a synchronous function as a logical execution node."""
+
+    def apply(inner: Callable[P, R]) -> Callable[P, R]:
+        return _wrap_instrumented(
+            inner,
+            name,
+            kind="node",
+            started=EventType.NODE_STARTED,
+            completed=EventType.NODE_COMPLETED,
+            failed=EventType.NODE_FAILED,
+        )
+
+    if func is not None:
+        return apply(func)
+    return apply
 
 
 @overload
@@ -160,14 +228,50 @@ def tool(
 ) -> Callable[P, R] | Callable[[Callable[P, R]], Callable[P, R]]:
     """Instrument a synchronous function as a logical tool node.
 
-    ``tool.completed`` / ``tool.failed`` use ``parent_event_id`` of the
-    matching ``tool.started`` from the contextvars stack, not timestamps.
+    ``*.completed`` / ``*.failed`` use ``parent_event_id`` of the matching
+    ``*.started`` from the contextvars stack, not timestamps.
     """
 
+    def apply(inner: Callable[P, R]) -> Callable[P, R]:
+        return _wrap_instrumented(
+            inner,
+            name,
+            kind="tool",
+            started=EventType.TOOL_STARTED,
+            completed=EventType.TOOL_COMPLETED,
+            failed=EventType.TOOL_FAILED,
+        )
+
     if func is not None:
-        return _wrap_tool(func, name)
+        return apply(func)
+    return apply
 
-    def decorator(inner: Callable[P, R]) -> Callable[P, R]:
-        return _wrap_tool(inner, name)
 
-    return decorator
+@overload
+def llm(func: Callable[P, R]) -> Callable[P, R]: ...
+
+
+@overload
+def llm(*, name: str | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
+
+
+def llm(
+    func: Callable[P, R] | None = None,
+    *,
+    name: str | None = None,
+) -> Callable[P, R] | Callable[[Callable[P, R]], Callable[P, R]]:
+    """Instrument a synchronous function as a logical LLM node."""
+
+    def apply(inner: Callable[P, R]) -> Callable[P, R]:
+        return _wrap_instrumented(
+            inner,
+            name,
+            kind="llm",
+            started=EventType.LLM_STARTED,
+            completed=EventType.LLM_COMPLETED,
+            failed=EventType.LLM_FAILED,
+        )
+
+    if func is not None:
+        return apply(func)
+    return apply

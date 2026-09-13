@@ -1,7 +1,7 @@
 """Catalog of Universal Agent Event Protocol types.
 
 Unknown types may still be persisted if the envelope is valid.
-This slice only *emits* run.* and tool.* lifecycle events.
+This slice emits run.* plus agent.*, node.*, tool.*, and llm.* lifecycle events.
 """
 
 from __future__ import annotations
