@@ -22,6 +22,14 @@ Read before changing code:
 - [docs/development/development-guide.md](docs/development/development-guide.md)
 - Relevant ADRs in [docs/adr/](docs/adr/)
 
+### Documentation conflict rule
+
+When documentation conflicts:
+
+1. Locked ADRs in [`docs/adr/`](docs/adr/) win for **implementation**.
+2. [`docs/product/v1.md`](docs/product/v1.md) wins for **v1 scope**.
+3. The long-form Architecture & Execution Plan (`docs/Agent_Execution_Intelligence_Architecture_and_Execution_Plan_v0.2_Concrete.docx`) **must be synchronized** rather than left contradictory.
+
 If a change would alter a locked decision, open an ADR **first**. Do not silently change:
 
 - Universal Agent Event Protocol shape

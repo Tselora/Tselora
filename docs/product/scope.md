@@ -17,7 +17,7 @@ See [v1.md](v1.md) and [roadmap.md](roadmap.md).
 
 **v1** is local, file-based, single-user, inspect-and-visualize.
 
-**Not v1:** database, distributed collector, cloud, auth, multi-tenancy, production runtime control, experience graph, generic re-execution.
+**Not v1:** database, distributed collector, cloud/hosted mode, auth, multi-tenancy, runtime control, experience graph, inference-server integration, generic re-execution.
 
 ## Layers we will build (over time)
 

@@ -44,4 +44,8 @@ Bridging OTEL spans to parent_event_id is not 1:1 with Tselora’s node instance
 
 ## 7. Homepage URL in pyproject.toml
 
-`pyproject.toml` uses a placeholder GitHub org/repo (`tselora/tselora`) until the real remote exists.
+`pyproject.toml` currently points at `https://github.com/tselora/tselora`. The implemented remote may differ (`Tselora/Tselora`). Keep docs generic unless an ADR locks the canonical URL.
+
+## 8. Package name vs data-directory name
+
+The product and Python package are **Tselora** (`name = "tselora"` in `pyproject.toml`). The collector’s v1 data directory is still **`.agent-devtools/`** (see ADR-006 and `server/collector/app.py`). That on-disk path is the current implementation, not a second product. Whether to rename the directory later is undecided; do not change it without an ADR. The CLI is not implemented; `agent-devtools` as a pip/CLI name in older plan text is a stale placeholder.

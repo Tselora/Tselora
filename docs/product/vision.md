@@ -21,7 +21,7 @@ Developers inspect what happened, understand why execution **changed** (from str
 
 ## Positioning
 
-Tselora is a **developer / execution-intelligence layer**. It is not an agent framework and not an orchestrator. It does not choose the next tool. It does not replace your graph library.
+Tselora is a **developer / execution-intelligence layer**. It is not an agent framework, harness, or orchestrator. It is not an inference engine or vLLM replacement, not a generic LLM observability dashboard, and not an evaluation product. It can coexist with OpenTelemetry and LLM observability/evaluation systems through **adapters**. It does not choose the next tool.
 
 ## Principles
 

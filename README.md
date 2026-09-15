@@ -8,7 +8,7 @@ Developers can inspect what happened, understand why execution changed (from str
 
 Tselora is **not** another agent framework or orchestration runtime. It is a developer / execution-intelligence layer that works **with** agents you already have.
 
-> Status: **architecture and scaffolding**. Protocol, SDK, collector, projections, and UI are specified but not implemented yet. See [docs/product/v1.md](docs/product/v1.md) and [docs/development/development-guide.md](docs/development/development-guide.md).
+> Status: **local execution-shadow foundation**. Protocol, JSONL collector, and raw-Python SDK instrumentation (including context propagation) exist. ProjectionEngine and UI are specified for Week 3 and not implemented yet. See [docs/product/v1.md](docs/product/v1.md) and [docs/development/development-guide.md](docs/development/development-guide.md).
 
 ## What problem it solves
 
@@ -27,6 +27,7 @@ Tselora treats execution as an **append-only event log** plus a **canonical proj
 - Not a replacement for LangGraph, CrewAI, OpenAI Agents SDK, Google ADK, etc.
 - Not a chain-of-thought recorder
 - Not a generic “re-run any Python agent” debugger in v1
+- Not an inference engine, vLLM replacement, generic LLM dashboard, or evaluation product
 - Not a cloud control plane, multi-tenant SaaS, or production auth system in v1
 
 ## Planned capabilities
@@ -101,7 +102,7 @@ The **event log is the source of truth**. The UI does not invent execution seman
 
 ## Stack (intended)
 
-Python 3.12+, Pydantic, FastAPI, React, TypeScript, React Flow, WebSockets, Typer (CLI). Implementation has not started.
+Python 3.12+, Pydantic, FastAPI, React, TypeScript, React Flow, WebSockets, Typer (CLI). v1 persistence is **JSONL**, not SQLite.
 
 ## License
 

@@ -27,7 +27,19 @@ See [ADR-006](../adr/ADR-006-file-based-persistence.md).
 - `metadata.json`: run-level non-authoritative helpers (display name, start time cache). If it disagrees with the log, **the log wins**.
 - `snapshot.json`: optional; never source of truth.
 
-Directory `.agent-devtools/` is local runtime data. It is gitignored.
+Directory `.agent-devtools/` is local runtime data (current implemented path; the product name is Tselora). It is gitignored.
+
+Authoritative v1 model:
+
+```text
+Event log (JSONL / JsonlEventStore)
+    ↓
+ProjectionEngine
+    ↓
+derived run / graph / UI state
+```
+
+SQLite/PostgreSQL may appear later behind `EventStore`. They are **not** the v1 persistence layer.
 
 ## EventStore abstraction
 

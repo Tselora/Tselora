@@ -20,7 +20,7 @@ The protocol does **not** define TCP framing, HTTP paths, or UI widgets.
 | `schema_version` | Protocol version, e.g. `"0.1"` |
 | `event_id` | Globally unique id (SDK-assigned) |
 | `run_id` | Run this event belongs to |
-| `sequence` | Monotonic per run; assigned at **emit** time |
+| `sequence` | **Required** for emitted events; producer-assigned, monotonic per `run_id` |
 | `timestamp` | UTC instant of emission (ISO-8601) |
 | `type` | Event type string |
 
@@ -99,7 +99,7 @@ The protocol does **not** define TCP framing, HTTP paths, or UI widgets.
 ## Invariants
 
 - `event_id` unique globally (practically: unique enough that collisions are treated as duplicates).
-- `sequence` strictly increases per `run_id` at the **emitter** (gaps possible if events never arrive).
+- `sequence` is **required** on SDK-emitted events and strictly increases per `run_id` at the **emitter** (gaps possible if events never arrive). There is no historical/import exception in the current architecture.
 - `type` is from the catalog or a documented extension process.
 - `payload` is JSON-serializable and framework-agnostic.
 - Private chain-of-thought is out of protocol scope.

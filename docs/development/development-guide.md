@@ -1,6 +1,10 @@
 # Development guide
 
-Architecture-first implementation plan and **locked development rules**. Do not start this sequence until a later task explicitly begins Week 1. This repository’s initial commit is documentation and scaffolding only.
+Architecture-first implementation plan and **locked development rules**.
+
+Week 1 (protocol, JSONL collector) and Week 2 (SDK instrumentation, batching, context propagation) have landed as vertical slices. **Week 3** (ProjectionEngine, REST/WebSocket, first UI) is the next implementation sequence. Adapters beyond raw Python, runtime control, and inference correlation are **after** that sequence.
+
+When documentation conflicts: (1) locked ADRs in `docs/adr/` win for implementation, (2) `docs/product/v1.md` wins for v1 scope, (3) the long-form Architecture & Execution Plan must be synchronized rather than left contradictory.
 
 ## Stack
 
@@ -132,4 +136,8 @@ Replaying the event stream through ProjectionEngine must produce the same result
 
 ## After Week 3
 
-Adapters beyond raw Python, control plane, and cross-run features are **out of this three-week sequence**. Follow [roadmap.md](../product/roadmap.md).
+The first public milestone is the Week 3 local vertical slice (instrument → JSONL → project → inspect → visualization replay). **Do not** treat a later control-channel week as part of that milestone.
+
+OpenTelemetry is an **inbound adapter after** the raw-Python slice, not an MVP dependency and not the core protocol. Missing `parent_event_id` is better than a fabricated causal edge. Unstable `gen_ai.*` conventions are not required core fields.
+
+Adapters beyond raw Python, runtime control, real fork/re-execution, experience graph, hosted mode, and inference-server integration are **out of this three-week sequence**. Follow [roadmap.md](../product/roadmap.md) and [v1.md](../product/v1.md).

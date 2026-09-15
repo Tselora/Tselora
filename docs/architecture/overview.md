@@ -10,7 +10,7 @@ The current system is an **agent execution observability foundation**: Agent →
 
 ## Purpose
 
-Give developers a faithful, inspectable **shadow** of what an agent actually executed: structure, time, state, causality, retries, loops, and parallel work—plus **observable** decision metadata.
+Give developers a faithful, inspectable **execution shadow**: structure, causality, logical `node.id`, execution instances, timeline, retries, loops, fan-out, and observable decisions. Tselora can coexist with OpenTelemetry and LLM observability/evaluation products via adapters; it is not those products.
 
 ## Responsibilities
 

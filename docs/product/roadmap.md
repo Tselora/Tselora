@@ -8,7 +8,7 @@ Protocol, Python SDK, JSONL collector, ProjectionEngine, REST + WebSocket patche
 
 ## After v1 — Adapters
 
-OpenTelemetry bridge, then LangGraph, OpenAI Agents SDK, CrewAI, Google ADK, MCP-related instrumentation. Each adapter is a translation into the protocol.
+OpenTelemetry bridge (lossy inbound mapping into Tselora events; not the core protocol), then LangGraph, OpenAI Agents SDK, CrewAI, Google ADK, MCP-related instrumentation. Each adapter is a translation into the protocol. OTEL is **after** the raw-Python vertical slice.
 
 ## Future — Runtime control
 
