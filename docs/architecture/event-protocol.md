@@ -115,5 +115,6 @@ The protocol does **not** define TCP framing, HTTP paths, or UI widgets.
 - Additive optional fields
 - Namespaced extension types (`ext.<vendor>....`) if needed
 - Stricter payload schemas per type (Pydantic models in `core/events/`)
+- Remain **extensible enough** to correlate future inference-system telemetry without redesigning execution semantics (`run_id`, `event_id`, `sequence`, `parent_event_id`, `node.id`, `execution_instance_id`). Do not invent inference-specific event types in this document. Core stays inference-system-neutral.
 
 See [ADR-001](../adr/ADR-001-event-protocol.md).
