@@ -1,14 +1,17 @@
 """Execution context via contextvars. There is no global current node.
 
-Limitation (this slice): thread/executor/async propagation helpers are
-not implemented. Nested *synchronous* decorators share this context and
-restore the stack on exit, including when the inner function raises.
+Nested synchronous decorators share a context and restore the stack on
+exit, including when the inner function raises.
 
-Opaque third-party threads and subprocesses will not see this context.
+Thread/executor boundaries must use ``sdk.context`` helpers, which bind a
+*copy* of the stack so workers cannot mutate the caller's frames.
+Opaque third-party threads and subprocesses still will not see this
+context unless the application propagates explicitly.
 """
 
 from __future__ import annotations
 
+import threading
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 
@@ -33,6 +36,7 @@ class ExecutionContext:
     sequence: SequenceCounter
     _stack: list[ContextFrame] = field(default_factory=list)
     _instance_counts: dict[str, int] = field(default_factory=dict)
+    _instance_lock: threading.Lock = field(default_factory=threading.Lock)
 
     def current_parent_event_id(self) -> str | None:
         if not self._stack:
@@ -66,9 +70,23 @@ class ExecutionContext:
 
     def next_instance_id(self, logical_node_id: str) -> str:
         """Allocate ``node_id#n`` for this logical node within the run."""
-        n = self._instance_counts.get(logical_node_id, 0) + 1
-        self._instance_counts[logical_node_id] = n
-        return f"{logical_node_id}#{n}"
+        with self._instance_lock:
+            n = self._instance_counts.get(logical_node_id, 0) + 1
+            self._instance_counts[logical_node_id] = n
+            return f"{logical_node_id}#{n}"
+
+    def branch(self) -> ExecutionContext:
+        """Copy the stack; share sequence and instance allocation for this run.
+
+        Workers push/pop on the copy. The originating stack is unchanged.
+        """
+        return ExecutionContext(
+            run_id=self.run_id,
+            sequence=self.sequence,
+            _stack=list(self._stack),
+            _instance_counts=self._instance_counts,
+            _instance_lock=self._instance_lock,
+        )
 
 
 _execution_context: ContextVar[ExecutionContext | None] = ContextVar(
