@@ -18,7 +18,7 @@ Derived views:
 - `GraphState`
 - `TimelineState`
 
-Also: `StatePatch` generation for WebSocket (see [ADR-005](../adr/ADR-005-websocket-patches.md)).
+Also: `StatePatch` generation for WebSocket (see [ADR-005](../adr/ADR-005-websocket-patches.md)). Live **when** to `apply` (contiguous buffer, skip-hole timeout) is [ADR-007](../adr/ADR-007-live-sequence-gap.md), outside this engine.
 
 ## What the engine is not
 
@@ -54,7 +54,7 @@ Deterministic state documents. Same events → same state (including after shuff
 
 ## Failure cases
 
-- Apply with a hole in `sequence`: live mode may wait or apply speculatively; **rebuild** uses whatever was persisted, ordered by sequence. Live and rebuild must converge once the hole is filled.
+- Apply with a hole in `sequence`: **REST `rebuild`** uses whatever was persisted, ordered by `sequence`. **Live** waits until contiguous or **2.0s skip-hole**, then `apply` in increasing `sequence` ([ADR-007](../adr/ADR-007-live-sequence-gap.md)). Do not apply in arrival order. After drain (including late fill of a skipped sequence), live snapshot ≡ JSONL rebuild. No gap event or watermark on projected state.
 - Unknown event types: must not throw away the run; timeline should still list them.
 - Conflicting status (two terminals): last **sequence** wins; record the conflict in metadata if needed.
 

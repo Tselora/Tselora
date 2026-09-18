@@ -2,21 +2,21 @@
 
 This file records **concerns** about locked decisions. It does **not** change those decisions. Implementation follows the locked architecture until an ADR supersedes it.
 
-## 1. Live apply vs sequence holes
+## 1. Live apply vs sequence holes — CLOSED
 
 At-least-once + async transport implies events can arrive out of order. Incremental `apply` during a live run may see `sequence` 30 before 29.
 
 **Locked:** arrival order is not causal truth; `sequence` is used for deterministic ordering; rebuild is authoritative.
 
-**Concern:** Week 1–3 must specify a concrete live policy (buffer until contiguous sequence vs apply-and-reorder). Either is compatible if rebuild remains the source of displayed REST state after reconnect. Risk: naive live graphs flicker if they apply strictly in arrival order.
+**Closed by [ADR-007](../adr/ADR-007-live-sequence-gap.md):** live projection buffers per `run_id` until `sequence` is contiguous (`next_seq` starts at 1), then `apply` through `ProjectionEngine`. Do not apply in arrival order. REST rebuild does not use this buffer.
 
 **Do not change:** JSONL as truth; ProjectionEngine as canonical.
 
-## 2. Sequence gaps vs “monotonic at emitter”
+## 2. Sequence gaps vs “monotonic at emitter” — CLOSED
 
 If the process crashes after incrementing sequence but before durable send, gaps appear. Projection should tolerate gaps.
 
-**Concern:** UI might look “stuck” waiting for a sequence that will never exist. Need an explicit timeout or “highest contiguous vs highest seen” in implementation (not specified in the lock).
+**Closed by [ADR-007](../adr/ADR-007-live-sequence-gap.md):** each hole has a **2.0s** timer that later events do not reset. On timeout, skip-hole: advance `next_seq` to the lowest buffered sequence and `apply` in increasing `sequence`. A late skipped event is persisted and `apply`’d immediately if `event_id` is new; never rollback. No gap event, watermark, or extra `ProjectionState` field. After drain, live snapshot ≡ JSONL `rebuild`; on failure, rebuild live from JSONL and REST-resync clients.
 
 ## 3. `execution_instance_id` optional on the wire
 

@@ -13,7 +13,7 @@ The **immutable event log** is the sole source of truth.
 
 A single **ProjectionEngine** implements `apply(event)` and `rebuild(events)` and derives `RunState`, `NodeState`, `GraphState`, and `TimelineState`.
 
-The same logic supports live execution, REST, WebSocket, and replay/time travel.
+The same logic supports live execution, REST, WebSocket, and replay/time travel. Live **when** to call `apply` (contiguous buffer, 2.0s skip-hole) is [ADR-007](ADR-007-live-sequence-gap.md). The engine itself is unchanged.
 
 Snapshots may exist later as **optimization only**. They are not authoritative.
 

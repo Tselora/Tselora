@@ -29,6 +29,7 @@ Therefore duplicates and out-of-order arrival are normal. Collector receive orde
 - Live UI must not assume contiguous arrival
 - Emitters need durable-enough identity for in-flight batches (implementation detail in Week 2)
 - Sequence gaps after crash are possible
+- Live contiguous wait and skip-hole timeout are specified in [ADR-007](ADR-007-live-sequence-gap.md)
 
 ## Alternatives considered
 

@@ -21,8 +21,8 @@ Give developers a faithful, inspectable **execution shadow**: structure, causali
 | Collector | Receive, redact, dedupe, persist | Interpreting graph semantics |
 | EventStore (JSONL in v1) | Durable append-only log | Query language, multi-node replication |
 | ProjectionEngine | Run/node/graph/timeline state; patches | Persistence format |
-| REST | Bootstrap, full state, history, reconnect | Live incrementals as source of truth |
-| WebSocket | State patches after projection | Rebuilding semantics in the client |
+| REST | Bootstrap, full state, history, reconnect (`rebuild` from JSONL; no live buffer) | Live incrementals as source of truth |
+| WebSocket | State patches after live `apply` / drain | Rebuilding semantics in the client; patches for still-buffered events |
 | React UI | Rendering projected state; replay slider over projections | Independent execution graph logic |
 | Command channel (future) | Forwarding control intents | Being the source of runtime state |
 
@@ -40,7 +40,7 @@ Give developers a faithful, inspectable **execution shadow**: structure, causali
 4. `parent_event_id` is the primary causal edge.
 5. Logical `node.id` ≠ `execution_instance_id`.
 6. Duplicate `event_id` must not duplicate state.
-7. Rebuild from the log equals incremental apply.
+7. Rebuild from the log equals incremental apply (in sequence order). Live skip-hole still converges after drain ([ADR-007](../adr/ADR-007-live-sequence-gap.md)).
 8. UI can always be reconstructed from the log (REST bootstrap).
 9. Core models stay framework-neutral and inference-system-neutral.
 10. No private chain-of-thought capture.
@@ -48,10 +48,10 @@ Give developers a faithful, inspectable **execution shadow**: structure, causali
 ## Failure cases
 
 - Collector down: SDK batches and retries; duplicates possible; collector must be idempotent.
-- Out-of-order events: buffer or apply with incomplete parent, then repair when parent arrives—implementation must still converge to the same rebuilt state.
+- Out-of-order events: live contiguous buffer or 2.0s skip-hole, then `apply` in increasing `sequence` ([ADR-007](../adr/ADR-007-live-sequence-gap.md)); parent edges may repair when the parent event arrives. REST rebuilds JSONL and does not wait. Implementation must still converge to the same rebuilt state after drain.
 - Lost context across threads/async/subprocesses: causal chain may break; document and provide propagation helpers.
 - Corrupt JSONL line: isolate the run; do not silently skip in a way that looks like a successful projection.
-- Client disconnect: REST reload + optional last-applied sequence; do not invent missing events in the UI.
+- Client disconnect or patch cursor mismatch: REST reload; do not invent missing events in the UI.
 
 ## Future extension points
 

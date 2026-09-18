@@ -2,7 +2,7 @@
 
 Architecture-first implementation plan and **locked development rules**.
 
-Week 1 (protocol, JSONL collector) and Week 2 (SDK instrumentation, batching, context propagation) have landed as vertical slices. **Week 3** (ProjectionEngine, REST/WebSocket, first UI) is the next implementation sequence. Adapters beyond raw Python, runtime control, and inference correlation are **after** that sequence.
+Week 1 (protocol, JSONL collector) and Week 2 (SDK instrumentation, batching, context propagation) have landed as vertical slices. **Week 3** (ProjectionEngine, REST/WebSocket, first UI) is the next implementation sequence. Live sequence-gap policy is locked in [ADR-007](../adr/ADR-007-live-sequence-gap.md) (contiguous wait, 2.0s skip-hole; REST rebuild unchanged). Adapters beyond raw Python, runtime control, and inference correlation are **after** that sequence.
 
 When documentation conflicts: (1) locked ADRs in `docs/adr/` win for implementation, (2) `docs/product/v1.md` wins for v1 scope, (3) the long-form Architecture & Execution Plan must be synchronized rather than left contradictory.
 
@@ -101,6 +101,8 @@ Implement:
 - `core/projection/patches.py`
 - `server/api/runs.py`
 - `server/ws.py`
+
+Live projection (when implemented) must follow [ADR-007](../adr/ADR-007-live-sequence-gap.md): persist JSONL immediately; buffer live `apply` until contiguous `sequence`; 2.0s skip-hole; no gap fields; REST stays `rebuild` only.
 
 UI:
 

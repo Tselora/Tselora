@@ -39,7 +39,7 @@ Stable contract. SDK assigns `event_id` and per-run `sequence` **at emit time**.
 
 ### Local collector
 
-HTTP (or equivalent local) ingest. Redact. Deduplicate by `event_id`. Persist. Notify projection. Tolerate out-of-order arrival.
+HTTP (or equivalent local) ingest. Redact. Deduplicate by `event_id`. Persist **immediately**. Notify live projection. Tolerate out-of-order arrival. Live buffering is not persistence.
 
 ### JSONL event store
 
@@ -47,12 +47,12 @@ Append-only files under `.agent-devtools/runs/run_<id>/`. Authoritative.
 
 ### ProjectionEngine
 
-`apply(event)` and `rebuild(events)`. Derives graph, timeline, run state, node state. Produces patches for live UI.
+`apply(event)` and `rebuild(events)`. Derives graph, timeline, run state, node state. Produces patches for live UI **after** `apply`. Live contiguous wait / 2.0s skip-hole is [ADR-007](../adr/ADR-007-live-sequence-gap.md), not a change to this engine.
 
 ### REST + WebSocket
 
-REST: initial load, full state, history, reconnect.  
-WebSocket: live **state patches**, not the full log on every tick.
+REST: initial load, full state, history, reconnect — **`rebuild` from JSONL only**; no live buffer, no 2.0s timer.  
+WebSocket: live **state patches** after `apply` of an event or drained batch, not the full log, not buffered events ([ADR-007](../adr/ADR-007-live-sequence-gap.md)).
 
 ### React UI
 
@@ -75,7 +75,8 @@ Renders projections. Replay is re-projection (or cached projections keyed by seq
 
 - Collector receive order ≠ causal truth.
 - Transport is asynchronous; delivery is at-least-once.
-- Patches are derived **after** projection.
+- Patches are derived **after** projection (`apply` / drained batch).
+- REST rebuild does not observe the live sequence buffer.
 - No hop may introduce a competing source of truth.
 
 ## Failure cases
@@ -84,6 +85,7 @@ Renders projections. Replay is re-projection (or cached projections keyed by seq
 | --- | --- |
 | Adapter crash mid-node | Best-effort `*.failed` if the SDK can still emit; otherwise run looks incomplete until timeout/UI shows last known state |
 | Duplicate delivery | Ignored after first persist/apply for that `event_id` |
+| Late / out-of-order `sequence` | Persist immediately. Live buffers until contiguous or 2.0s skip-hole ([ADR-007](../adr/ADR-007-live-sequence-gap.md)). REST rebuilds the log as stored. |
 | Late parent | Graph may briefly lack an edge; rebuild must be complete |
 | UI refresh | REST loads from store + projection; must match replay of JSONL |
 

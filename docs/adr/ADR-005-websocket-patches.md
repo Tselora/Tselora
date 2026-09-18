@@ -24,6 +24,8 @@ Event → ProjectionEngine → state change → StatePatch → WebSocket → Rea
 
 The UI applies patches to REST-bootstrapped state. It does not independently reconstruct execution semantics. After disconnect, REST reload (or rebuild) restores truth from the log.
 
+REST **rebuilds from JSONL** and does **not** use the live sequence buffer or skip-hole timer ([ADR-007](ADR-007-live-sequence-gap.md)). WebSocket patches are emitted only after live `apply` of an event or drained batch; buffered events produce no patch until drained. Cursor mismatch → REST resync.
+
 ## Consequences
 
 **Positive**
