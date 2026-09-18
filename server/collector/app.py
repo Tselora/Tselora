@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from core.events.schema import AgentEvent
 from core.redaction import IdentityRedactor, Redactor
+from server.api.runs import router as runs_router
 from server.storage.jsonl import JsonlEventStore
 
 DEFAULT_DATA_DIR = ".agent-devtools"
@@ -34,6 +35,7 @@ def create_app(
     app = FastAPI(title="Tselora collector", version="0.1.0")
     app.state.store = event_store
     app.state.redactor = event_redactor
+    app.include_router(runs_router)
 
     @app.get("/health")
     def health() -> dict[str, bool]:

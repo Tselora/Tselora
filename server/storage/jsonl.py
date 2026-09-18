@@ -70,6 +70,10 @@ class JsonlEventStore:
             seen.add(event.event_id)
             return True
 
+    def has_run(self, run_id: str) -> bool:
+        """True when ``events.jsonl`` exists for ``run_id`` (including an empty file)."""
+        return self._events_path(run_id).is_file()
+
     def read(self, run_id: str) -> list[AgentEvent]:
         return list(self.iter_events(run_id))
 
