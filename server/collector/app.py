@@ -13,6 +13,7 @@ from core.projection.live import LiveProjectionSession
 from core.redaction import IdentityRedactor, Redactor
 from server.api.runs import router as runs_router
 from server.storage.jsonl import JsonlEventStore
+from server.ws import PatchHub, router as ws_router
 
 DEFAULT_DATA_DIR = ".agent-devtools"
 
@@ -34,12 +35,16 @@ def create_app(
     event_store = store or JsonlEventStore(data_dir)
     event_redactor: Redactor = redactor or IdentityRedactor()
     live_session = live or LiveProjectionSession()
+    hub = PatchHub()
+    live_session.subscribe(hub.on_patch)
 
     app = FastAPI(title="Tselora collector", version="0.1.0")
     app.state.store = event_store
     app.state.redactor = event_redactor
     app.state.live = live_session
+    app.state.hub = hub
     app.include_router(runs_router)
+    app.include_router(ws_router)
 
     @app.get("/health")
     def health() -> dict[str, bool]:
