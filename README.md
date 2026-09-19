@@ -8,7 +8,7 @@ Developers can inspect what happened, understand why execution changed (from str
 
 Tselora is **not** another agent framework or orchestration runtime. It is a developer / execution-intelligence layer that works **with** agents you already have.
 
-> Status: **local execution-shadow foundation**. Protocol, JSONL collector, and raw-Python SDK instrumentation (including context propagation) exist. ProjectionEngine and UI are specified for Week 3 and not implemented yet. See [docs/product/v1.md](docs/product/v1.md) and [docs/development/development-guide.md](docs/development/development-guide.md).
+> Status: **local execution-shadow foundation**. Protocol, JSONL collector, raw-Python SDK, ProjectionEngine, REST snapshots, live `StatePatch` WebSocket, and a one-run React viewer exist. Node inspector, Why? display, and visualization replay are still v1 scope, not this slice. See [docs/product/v1.md](docs/product/v1.md) and [docs/development/development-guide.md](docs/development/development-guide.md).
 
 ## What problem it solves
 
@@ -87,7 +87,7 @@ The **event log is the source of truth**. The UI does not invent execution seman
 | `sdk/` | Emission, batching, transport, decorators |
 | `server/` | Collector, storage, REST, WebSocket |
 | `adapters/` | Framework-neutral translations into the protocol |
-| `ui/` | React execution graph, timeline, inspector |
+| `ui/` | One-run live React viewer (graph, nodes, timeline) |
 | `cli/` | Local developer CLI |
 | `docs/` | Architecture, ADRs, product, development |
 | `examples/` | Sample agents for acceptance tests (later) |

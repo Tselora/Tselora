@@ -2,4 +2,4 @@
 
 REST for initial load, full state, reconnect, historical data.
 
-Planned: `runs.py` (Week 3). Live updates are WebSocket **patches**, not this package duplicating projection.
+Implemented: `runs.py` (`GET /v1/runs/{run_id}` rebuilds from JSONL via ProjectionEngine). Live updates are WebSocket **patches** (`server/ws.py`), not this package duplicating projection.

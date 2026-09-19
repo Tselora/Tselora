@@ -1,29 +1,27 @@
 # Getting started
 
-Tselora is in early implementation. Week 1 step 1 is a vertical slice: `@tool` → HTTP collector → JSONL. There is no ProjectionEngine or UI yet.
+Tselora is a local execution shadow: instrumented Python → collector → JSONL → ProjectionEngine → REST / WebSocket → one-run UI.
 
 ## Prerequisites
 
 - Git
 - Python **3.12+** (3.13 is fine)
-- Node.js 20+ when UI work starts (Week 3)
+- Node.js 20+ for the UI
 - A virtualenv tool (`python -m venv`)
 
-## Clone and install (when code exists)
+## Clone and install
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Tselora/Tselora.git
 cd Tselora
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
-## Run the collector and example (Week 1 slice)
+## Run the collector and example
 
 ```bash
-pip install -e ".[dev]"
-
 # Terminal 1 — collector (JSONL under .agent-devtools/)
 TSELOA_DATA_DIR=.agent-devtools uvicorn server.collector.app:app --host 127.0.0.1 --port 8000
 
@@ -32,6 +30,24 @@ TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/simple_agent.py
 ```
 
 Events are appended to `.agent-devtools/runs/<run_id>/events.jsonl`. The SDK queues events and retries HTTP on collector outage, reusing the same `event_id`. The CLI (`tselora server`) is not implemented yet.
+
+Projected state is available at `GET /v1/runs/{run_id}` and live patches at `WS /v1/runs/{run_id}/ws`.
+
+## Run the UI
+
+```bash
+cd ui
+npm install
+npm run dev
+```
+
+Vite listens on `http://127.0.0.1:5173` and proxies `/v1` to the collector. Open:
+
+```text
+http://127.0.0.1:5173/runs/{run_id}
+```
+
+`run_id` is in the example output and under `.agent-devtools/runs/`. Details: [ui/README.md](../../ui/README.md).
 
 ## Layout to read first
 
@@ -43,7 +59,7 @@ Events are appended to `.agent-devtools/runs/<run_id>/events.jsonl`. The SDK que
 
 ## Local runtime data
 
-When the collector exists, it will write:
+The collector writes:
 
 ```text
 .agent-devtools/runs/run_<id>/events.jsonl
@@ -55,13 +71,8 @@ This directory is gitignored. Do not commit logs.
 
 ```bash
 pytest
+cd ui && npm test
 ```
-
-Week 1 step 1 tests cover the event envelope, IDs, sequence, context, decorator, JSONL, collector, and an end-to-end example.
-
-## UI (future)
-
-The React app will live in `ui/` (TypeScript, React Flow, WebSockets). Scaffolding is a README only until Week 3.
 
 ## Rules of the road
 
