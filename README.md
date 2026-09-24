@@ -10,7 +10,7 @@ Tselora records what an existing agent actually did as structured events, then r
 
 Install the SDK from PyPI. This repository holds usage examples and the demo GIF. The implementation source is private.
 
-**Python package:** `tselora` **0.1.4** (`pip install tselora`).
+**Python package:** `tselora` **0.1.5** (`pip install tselora`).
 
 ## Install
 
