@@ -12,9 +12,9 @@ It is **not** an agent framework or orchestrator. It sits beside agents you alre
 
 **Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.13**. Implementation source is distributed on PyPI; this repository holds usage examples and the demo GIF.
 
-![Early one-run viewer: execution graph, run status, and node list](https://raw.githubusercontent.com/Tselora/Tselora/main/docs/assets/tselora-demo.gif)
+![Tselora product demo: agent execution, reconstructed topology and structured decisions, Experience, deterministic comparison, and exact-structure historical cohort](https://raw.githubusercontent.com/Tselora/Tselora/main/docs/assets/tselora-demo.gif)
 
-*The GIF shows the original one-run graph viewer (`search_web` on a completed run). It does not yet show Experience, Compare, or Learn.*
+*The GIF shows the full flow: an agent executes, Tselora reconstructs the execution topology and structured decisions, turns the run into a reusable Experience, compares executions deterministically, and retrieves a historical cohort sharing the same structure fingerprint.*
 
 ## Why Tselora
 
@@ -142,9 +142,7 @@ More examples: [examples/README.md](examples/README.md).
 
 `tselora serve` starts the **collector** (ingest, REST, WebSocket patches). The Python wheel does **not** bundle Explorer.
 
-This public repository currently ships **examples and the demo GIF**, not the Vite Explorer app. When you have Explorer, it is intended to show the execution graph, timeline, node inspection, structured Why?, visualization replay over projected sequence, lineage, comparison, and Learn cohorts.
-
-Until Explorer is published here, use REST (and the GIF as a visual preview of the early graph viewer):
+The demo GIF above is a visual of that Explorer flow. This public repository does not ship the Vite app; the wheel does not bundle it either. Inspect runs over REST:
 
 | Need | Endpoint |
 | --- | --- |
