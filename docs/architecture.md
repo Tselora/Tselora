@@ -15,7 +15,7 @@ ProjectionEngine
         ↓
 REST / WebSocket patches
         ↓
-Experience, comparison, Learn query
+Explorer (`ui/`, not in the PyPI wheel)
 ```
 
 **Event log.** Append-only JSONL is the source of truth for a run. The SDK assigns `event_id` and per-run `sequence` at emit time. Delivery is at-least-once; the collector deduplicates by `event_id`. Causal edges come from `parent_event_id`, not arrival order.

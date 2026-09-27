@@ -14,4 +14,4 @@ tselora serve
 TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/structured_execution.py
 ```
 
-Then `GET http://127.0.0.1:8000/v1/runs/<run_id>`. Explorer (Vite on port 5173) is **not** included in this repository or the PyPI wheel.
+Then open `http://127.0.0.1:5173/runs/<run_id>` (Explorer: `cd ui && npm install && npm run dev`) or `GET http://127.0.0.1:8000/v1/runs/<run_id>`.

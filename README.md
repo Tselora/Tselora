@@ -10,7 +10,7 @@ Tselora reconstructs AI-agent executions into a deterministic execution model so
 
 It is **not** an agent framework or orchestrator. It sits beside agents you already run.
 
-**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.13**. Implementation source is distributed on PyPI; this repository holds usage examples and the demo GIF.
+**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.13**. Implementation source is distributed on PyPI; this repository holds usage examples, Explorer, and the demo GIF.
 
 ![Tselora product demo: agent execution, reconstructed topology and structured decisions, Experience, deterministic comparison, and exact-structure historical cohort](https://raw.githubusercontent.com/Tselora/Tselora/main/docs/assets/tselora-demo.gif)
 
@@ -47,7 +47,7 @@ Observe → Explain → Control → Remember → Reproduce → Compare → Inter
 | **Remember** | Derive an Execution Experience from a **terminal** run. |
 | **Reproduce** | Record checkpoints and parent/child fork lineage; the app owns restore. |
 | **Compare** | Deterministically compare two reconstructed executions (no winner/loser). |
-| **Interpret** | Present observable differences (via Explorer when available, or REST). |
+| **Interpret** | Present observable differences in Explorer (and via comparison REST). |
 | **Learn** | Retrieve Experiences with the same exact `structure_fingerprint`. |
 
 Learn v0 is exact-match and read-only. It does **not** use embeddings, vector similarity, ranking, or autonomous optimization.
@@ -67,7 +67,7 @@ Execution state / topology
         ↓
 Experience / reproduction lineage / comparison / Learn query
         ↓
-REST + WebSocket  (+ Explorer UI when you have it)
+REST + WebSocket + Explorer (`ui/`)
 ```
 
 - The **event log** is authoritative.
@@ -92,33 +92,47 @@ Google ADK and other stacks are not claimed here.
 
 ## Quick start
 
-Python **3.12+**.
+Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.13**.
 
 ```bash
+git clone https://github.com/Tselora/Tselora.git
+cd Tselora
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install tselora
+```
 
-# Terminal 1 — collector (JSONL under .agent-devtools/ by default)
+Terminal 1 — collector (`http://127.0.0.1:8000`):
+
+```bash
 tselora serve
+```
 
-# Terminal 2 — example from this repository
-git clone https://github.com/Tselora/Tselora.git
-cd Tselora
+Terminal 2 — Explorer (`http://127.0.0.1:5173`):
+
+```bash
+cd ui
+npm install
+npm run dev
+```
+
+Terminal 3 — example:
+
+```bash
 TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/simple_agent.py
 ```
 
-Copy the printed `run_id`. Inspect the reconstructed run:
+Copy the printed `run_id`, then:
 
-```bash
-curl -sS "http://127.0.0.1:8000/v1/runs/<run_id>"
-```
+1. Open `http://127.0.0.1:5173/runs/<run_id>` — graph, timeline, node inspector.
+2. Compare: `http://127.0.0.1:5173/compare?left_run_id=<run_id>&right_run_id=<other_run_id>` (run the example twice).
+3. Learn: `http://127.0.0.1:5173/learn?run_id=<run_id>` (exact `structure_fingerprint` cohorts).
 
-Richer topology (retry / loop / fan-out in ordinary Python): `python examples/structured_execution.py`.
-
-Optional adapters (install the extra first): `examples/otel_spans.py`, `examples/langgraph_stategraph.py`, `examples/openai_agents_runner.py`, `examples/crewai_kickoff.py`.
+`simple_agent.py` is the smoke test. For retry / loop / fan-out topology use `examples/structured_execution.py`. Neither example emits structured Why? fields; Experience still appears for terminal runs.
 
 Collector flags: `tselora serve --host 127.0.0.1 --port 8000 --data-dir .agent-devtools`.
+
+Optional adapters (install the extra first): `examples/otel_spans.py`, `examples/langgraph_stategraph.py`, `examples/openai_agents_runner.py`, `examples/crewai_kickoff.py`.
 
 ## Example
 
@@ -140,9 +154,11 @@ More examples: [examples/README.md](examples/README.md).
 
 ## Explorer
 
-`tselora serve` starts the **collector** (ingest, REST, WebSocket patches). The Python wheel does **not** bundle Explorer.
+This repository’s `ui/` app is Explorer. The PyPI wheel does **not** bundle it; `tselora serve` is collector-only.
 
-The demo GIF above is a visual of that Explorer flow. This public repository does not ship the Vite app; the wheel does not bundle it either. Inspect runs over REST:
+Vite listens on **5173** and proxies `/v1` (including WebSocket) to `TSELOA_COLLECTOR_URL` or `http://127.0.0.1:8000`. See [ui/README.md](ui/README.md).
+
+REST remains available for the same collector:
 
 | Need | Endpoint |
 | --- | --- |
@@ -196,6 +212,7 @@ Learn v0 retrieves historical Experiences that share the exact same `structure_f
 ## Documentation
 
 - [Quick start](docs/quickstart.md)
+- [Explorer](ui/README.md)
 - [Architecture](docs/architecture.md)
 - [Integrations](docs/integrations.md)
 - [Experience](docs/experience.md)

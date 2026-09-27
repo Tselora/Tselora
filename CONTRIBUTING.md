@@ -1,6 +1,6 @@
 # Contributing
 
-This public repository holds **examples and documentation**. The runnable product is the [`tselora`](https://pypi.org/project/tselora/) package on PyPI.
+This public repository holds **examples, Explorer (`ui/`), and documentation**. The collector and SDK are the [`tselora`](https://pypi.org/project/tselora/) package on PyPI.
 
 ## Examples and docs
 
@@ -8,9 +8,10 @@ This public repository holds **examples and documentation**. The runnable produc
 2. `python -m venv .venv && source .venv/bin/activate`
 3. `pip install tselora` (add extras if you touch an adapter example).
 4. `tselora serve` and run the example you changed.
-5. Open a pull request with a short description.
+5. For Explorer: `cd ui && npm install && npm test` (and `npm run dev` to look at a run).
+6. Open a pull request with a short description.
 
-Do not commit `.env`, credentials, or `.agent-devtools/` logs.
+Do not commit `.env`, credentials, `ui/node_modules`, or `.agent-devtools/` logs.
 
 ## Issues
 
