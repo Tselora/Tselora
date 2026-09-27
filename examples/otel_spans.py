@@ -1,6 +1,6 @@
 """OTEL tracer → Tselora SpanProcessor → collector JSONL.
 
-Requires: pip install -e ".[otel]"
+Requires: pip install "tselora[otel]"
 
 Terminal 1:
     tselora serve

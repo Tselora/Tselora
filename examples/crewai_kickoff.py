@@ -1,6 +1,6 @@
 """CrewAI kickoff → Tselora event-bus listener → collector JSONL.
 
-Requires: pip install -e ".[crewai]"
+Requires: pip install "tselora[crewai]"
 
 First-slice shape only: sequential Crew, one Agent, one Task, custom BaseLLM (no API key).
 Construct and retain ``TseloraCrewAIEventListener``. This is not zero-config.
@@ -11,9 +11,8 @@ Terminal 1 — collector:
 Terminal 2 — this example:
     TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/crewai_kickoff.py
 
-Terminal 3 — one-run viewer:
-    cd ui && npm run dev
-    open http://127.0.0.1:5173/runs/{run_id}
+Inspect the run:
+    curl -sS http://127.0.0.1:8000/v1/runs/{run_id}
 """
 
 from __future__ import annotations
@@ -72,7 +71,7 @@ def main() -> None:
     emitter.close()
     _ = listener
     print(f"run_id={run_id}")
-    print(f"Viewer: http://127.0.0.1:5173/runs/{run_id}")
+    print(f"projection: http://127.0.0.1:8000/v1/runs/{run_id}")
 
 
 if __name__ == "__main__":

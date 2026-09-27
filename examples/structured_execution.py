@@ -1,8 +1,8 @@
-"""Official Week 3 acceptance example: sequential nodes, retry, loop, fan-out, failure.
+"""Sequential nodes, retry, loop, fan-out, and a failed-then-retried tool.
 
 Retry, loop, and sequential sibling fan-out are ordinary Python control flow.
-The SDK only records nested decorator invocations. Open the printed ``run_id``
-in the one-run viewer.
+The SDK records nested decorator invocations. Inspect the printed ``run_id``
+via GET /v1/runs/{run_id}.
 
 Terminal 1:
     tselora serve
