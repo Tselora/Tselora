@@ -4,7 +4,7 @@ Install extras from PyPI. Each adapter **translates** framework activity into Ts
 
 | Extra | Entry point | Example |
 | --- | --- | --- |
-| (none) | `sdk.run`, `@tool`, `@node`, `@agent`, `@llm` | `examples/simple_agent.py` |
+| (none) | `sdk.run`, `@tool`, `@node`, `@agent`, `@llm` | `examples/research_retry.py`, `examples/simple_agent.py` |
 | `tselora[otel]` | `TseloraSpanProcessor` | `examples/otel_spans.py` |
 | `tselora[langgraph]` | `TseloraLangGraphCallbackHandler` | `examples/langgraph_stategraph.py` |
 | `tselora[openai-agents]` | `TseloraAgentsRunHooks` | `examples/openai_agents_runner.py` |

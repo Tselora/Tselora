@@ -20,10 +20,10 @@ tselora serve
 cd ui && npm install && npm run dev
 
 # Terminal 3
-TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/simple_agent.py
+TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/research_retry.py
 ```
 
-Open `http://127.0.0.1:5173/runs/<run_id>`. Compare and Learn are `/compare` and `/learn` on the same origin.
+Open `http://127.0.0.1:5173/runs/<run_id>`, select **research** for Why?. Run twice, then `/compare?left_run_id=…&right_run_id=…` and `/learn?run_id=…`.
 
 Events are stored under `.agent-devtools/runs/<run_id>/events.jsonl` unless the collector is started with `--data-dir` or `TSELOA_DATA_DIR`.
 

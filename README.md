@@ -116,19 +116,19 @@ npm install
 npm run dev
 ```
 
-Terminal 3 — example:
+Terminal 3 — canonical example (retry + Why?):
 
 ```bash
-TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/simple_agent.py
+TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/research_retry.py
 ```
 
 Copy the printed `run_id`, then:
 
-1. Open `http://127.0.0.1:5173/runs/<run_id>` — graph, timeline, node inspector.
-2. Compare: `http://127.0.0.1:5173/compare?left_run_id=<run_id>&right_run_id=<other_run_id>` (run the example twice).
-3. Learn: `http://127.0.0.1:5173/learn?run_id=<run_id>` (exact `structure_fingerprint` cohorts).
+1. Open `http://127.0.0.1:5173/runs/<run_id>` — graph, timeline, node inspector. Select **research** to see Why? (`decision=retry`, `failure_category=timeout`, …).
+2. Compare: run the example twice, then `http://127.0.0.1:5173/compare?left_run_id=<run_id>&right_run_id=<other_run_id>`.
+3. Learn: `http://127.0.0.1:5173/learn?run_id=<run_id>` (exact `structure_fingerprint`; filter `decision=retry`).
 
-`simple_agent.py` is the smoke test. For retry / loop / fan-out topology use `examples/structured_execution.py`. Neither example emits structured Why? fields; Experience still appears for terminal runs.
+That is Execution → Why? → Experience → Compare → Learn. Smaller smoke: `examples/simple_agent.py`. Extra topology (loop / fan-out): `examples/structured_execution.py`.
 
 Collector flags: `tselora serve --host 127.0.0.1 --port 8000 --data-dir .agent-devtools`.
 
@@ -137,20 +137,17 @@ Optional adapters (install the extra first): `examples/otel_spans.py`, `examples
 ## Example
 
 ```python
-from sdk import run, tool
+from sdk import agent, node, run, tool
 
-
-@tool(name="search_web")
-def search_web(query: str) -> str:
-    return f"results for {query}"
-
+# research → plan, search_web (fail then retry), gather
+# After timeout, research emits Why?: decision=retry, selected_strategy=fallback_search, …
 
 with run() as run_id:
-    search_web("Tselora")
+    research()
     print(run_id)
 ```
 
-More examples: [examples/README.md](examples/README.md).
+Full script: [examples/research_retry.py](examples/research_retry.py). More examples: [examples/README.md](examples/README.md).
 
 ## Explorer
 
