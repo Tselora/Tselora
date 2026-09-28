@@ -22,7 +22,7 @@ export function ReplayScrubber({
     <section>
       <h2>Execution Replay</h2>
       <p className="muted">This does not re-run the agent.</p>
-      <div className="scrubber">
+      <div className="scrubber replay-controls">
         <button type="button" onClick={() => onHistorical(clamp(n - 1))} disabled={n <= 0}>
           Previous
         </button>

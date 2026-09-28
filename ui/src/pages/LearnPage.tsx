@@ -166,7 +166,9 @@ export function LearnPage() {
           Which prior terminal executions have this exact structure?{" "}
           <Link to="/">Open a run</Link>
           {" · "}
-          <Link to="/compare">Compare runs</Link>
+          <Link className="product-action" to="/compare">
+            Compare runs
+          </Link>
         </p>
         <form onSubmit={onOpenRun}>
           <label>

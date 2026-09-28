@@ -46,7 +46,9 @@ function ExecutionFlowNodeComponent({ data, selected }: NodeProps) {
         </div>
       ) : null}
       <div className="exec-node-label">{payload.displayLabel}</div>
-      <div className="exec-node-status">{humanizeStatus(payload.status)}</div>
+      <div className="exec-node-status">
+        <span className={`status-badge status-badge-${kind}`}>{humanizeStatus(payload.status)}</span>
+      </div>
       <Handle type="source" position={Position.Right} />
     </div>
   );

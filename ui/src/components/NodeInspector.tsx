@@ -61,10 +61,12 @@ export function NodeInspector({
             <h3 className="details-title">{present?.title ?? ""}</h3>
             {present?.displayLabel ? <p className="details-label">{present.displayLabel}</p> : null}
             <p className={`details-status exec-status exec-status-${(node.status ?? "unknown").toLowerCase()}`}>
-              {humanizeStatus(node.status)}
+              <span className={`status-badge status-badge-${(node.status ?? "unknown").toLowerCase()}`}>
+                {humanizeStatus(node.status)}
+              </span>
             </p>
           </div>
-          <div className="why">
+          <div className={why.length === 0 ? "why why-empty" : "why why-present"}>
             <h3>Why?</h3>
             {why.length === 0 ? (
               <p className="muted">No structured decision fields were emitted.</p>

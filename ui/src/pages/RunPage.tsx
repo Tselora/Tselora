@@ -52,18 +52,18 @@ export function RunPage() {
           </label>
           <button type="submit">Open</button>
         </form>
-        <p className="muted">
-          <Link to="/compare">Compare runs</Link>
+        <p className="product-actions">
+          <Link className="product-action" to="/compare">
+            Compare runs
+          </Link>
           {runId ? (
-            <>
-              {" · "}
-              <Link to={`/learn?run_id=${encodeURIComponent(runId)}`}>Exact structure cohort</Link>
-            </>
+            <Link className="product-action" to={`/learn?run_id=${encodeURIComponent(runId)}`}>
+              Exact structure cohort
+            </Link>
           ) : (
-            <>
-              {" · "}
-              <Link to="/learn">Exact structure cohort</Link>
-            </>
+            <Link className="product-action" to="/learn">
+              Exact structure cohort
+            </Link>
           )}
         </p>
         {session.error ? <p className="muted">{session.error}</p> : null}

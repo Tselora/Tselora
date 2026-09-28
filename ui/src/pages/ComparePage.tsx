@@ -302,7 +302,10 @@ function ComparisonView({ doc }: { doc: ComparisonDocument }) {
                 doc.experience.structure_fingerprint.left.length > 0 ? (
                   <>
                     {" "}
-                    <Link to={`/learn?run_id=${encodeURIComponent(doc.left_run_id)}`}>
+                    <Link
+                      className="product-action"
+                      to={`/learn?run_id=${encodeURIComponent(doc.left_run_id)}`}
+                    >
                       Exact structure cohort (left)
                     </Link>
                   </>
@@ -311,7 +314,10 @@ function ComparisonView({ doc }: { doc: ComparisonDocument }) {
                 doc.experience.structure_fingerprint.right.length > 0 ? (
                   <>
                     {" "}
-                    <Link to={`/learn?run_id=${encodeURIComponent(doc.right_run_id)}`}>
+                    <Link
+                      className="product-action"
+                      to={`/learn?run_id=${encodeURIComponent(doc.right_run_id)}`}
+                    >
                       Exact structure cohort (right)
                     </Link>
                   </>

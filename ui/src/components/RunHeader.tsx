@@ -61,7 +61,11 @@ export function RunHeader({
       </p>
       <dl className="kv">
         <dt>Status</dt>
-        <dd>{humanizeStatus(run.status)}</dd>
+        <dd>
+          <span className={`status-badge status-badge-${(run.status ?? "unknown").toLowerCase()}`}>
+            {humanizeStatus(run.status)}
+          </span>
+        </dd>
         <dt>Executions</dt>
         <dd>{nodes.length}</dd>
         <dt>Events</dt>

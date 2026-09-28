@@ -57,7 +57,9 @@ export function NodeList({
                   <td>{row.title}</td>
                   <td>{row.displayLabel}</td>
                   <td className={`exec-status exec-status-${(status ?? "unknown").toLowerCase()}`}>
-                    {humanizeStatus(status)}
+                    <span className={`status-badge status-badge-${(status ?? "unknown").toLowerCase()}`}>
+                      {humanizeStatus(status)}
+                    </span>
                   </td>
                 </tr>
               );
