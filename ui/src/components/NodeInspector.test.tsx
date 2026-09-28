@@ -177,6 +177,48 @@ test("Why? does not show historical similar-run copy unless it is in payload", (
   expect(withHist.textContent).toContain("17/20 similar runs succeeded");
 });
 
+test("Why? long values wrap inside the card and stay fully readable", () => {
+  const longCategory =
+    "a_very_long_failure_category_that_should_wrap_cleanly_without_breaking_the_layout";
+  const structured = {
+    reason: "a very long structured value that should remain readable inside the panel",
+  };
+  const el = renderInspector(
+    baseNode({
+      payload: {
+        evidence: "primary_search_timeout",
+        decision: "retry",
+        selected_strategy: "fallback_search",
+        failure_category: longCategory,
+        action: "retry_search",
+      },
+    }),
+  );
+  const why = whySection(el);
+  expect([...why.querySelectorAll("dt")].map((n) => n.textContent)).toEqual([
+    "Evidence",
+    "Decision",
+    "Selected strategy",
+    "Failure category",
+    "Action",
+  ]);
+  const category = [...why.querySelectorAll("dt")].find((n) => n.textContent === "Failure category");
+  const categoryValue = category?.nextElementSibling as HTMLElement;
+  expect(categoryValue?.tagName).toBe("DD");
+  expect(categoryValue?.closest(".why .kv")).toBeTruthy();
+  expect(categoryValue?.textContent).toBe(longCategory);
+  expect(categoryValue?.getAttribute("title")).toBeNull();
+  expect(categoryValue?.querySelector("pre")).toBeNull();
+
+  const jsonEl = renderInspector(baseNode({ payload: { evidence: structured } }));
+  const evidence = [...whySection(jsonEl).querySelectorAll("dt")].find((n) => n.textContent === "Evidence");
+  expect(evidence?.nextElementSibling?.textContent).toBe(JSON.stringify(structured));
+  expect(jsonEl.querySelector("details")?.querySelector("summary")?.textContent).toBe(
+    "Technical details",
+  );
+  expect(jsonEl.querySelector("details")?.open).toBe(false);
+});
+
 test("Why? stringifies non-scalar allowlisted values", () => {
   const el = renderInspector(baseNode({ payload: { evidence: { sources: 7 } } }));
   const evidenceDt = [...el.querySelectorAll("dt")].find((n) => n.textContent === "Evidence");
