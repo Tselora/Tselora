@@ -59,7 +59,7 @@ Agent / framework
         ↓
 Execution events (Universal Agent Event Protocol)
         ↓
-Local collector → JSONL EventStore
+Local collector → event log (JSONL today)
         ↓
 ProjectionEngine
         ↓
@@ -70,7 +70,7 @@ Experience / reproduction lineage / comparison / Learn query
 REST + WebSocket + Explorer (`ui/`)
 ```
 
-- The **event log** is authoritative.
+- The **event log** is authoritative. The shipped store is JSONL. Local SQLite is the locked next default and is not in this package. No database server is required.
 - **ProjectionEngine** is the semantic interpreter (the client does not invent graph semantics).
 - **Experience** is derived from terminal projected state; it is not a second event log.
 - **Comparison** rebuilds both runs and diffs projected state (plus optional Experience).
@@ -201,6 +201,7 @@ Learn v0 retrieves historical Experiences that share the exact same `structure_f
 
 - Autonomous optimization / “Learn how to improve the agent”
 - Embeddings or vector similarity
+- Local SQLite as the default EventStore (architecture locked; not in 0.1.13). JSONL remains the shipped store
 - Hosted/cloud Tselora, authentication, multi-tenancy
 - Generic re-execution of arbitrary agents
 - Zero-config / zero-touch framework integration
