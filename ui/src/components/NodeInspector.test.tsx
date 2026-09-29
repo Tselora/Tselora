@@ -206,23 +206,35 @@ test("Why? long values wrap inside the card and stay fully readable", () => {
   const categoryValue = category?.nextElementSibling as HTMLElement;
   expect(categoryValue?.tagName).toBe("DD");
   expect(categoryValue?.closest(".why .kv")).toBeTruthy();
-  expect(categoryValue?.textContent).toBe(longCategory);
+  expect(categoryValue?.querySelector(".why-value")?.textContent).toBe(longCategory);
   expect(categoryValue?.getAttribute("title")).toBeNull();
   expect(categoryValue?.querySelector("pre")).toBeNull();
 
   const jsonEl = renderInspector(baseNode({ payload: { evidence: structured } }));
   const evidence = [...whySection(jsonEl).querySelectorAll("dt")].find((n) => n.textContent === "Evidence");
-  expect(evidence?.nextElementSibling?.textContent).toBe(JSON.stringify(structured));
+  expect(evidence?.nextElementSibling?.querySelector(".why-value")?.textContent).toBe(
+    JSON.stringify(structured),
+  );
   expect(jsonEl.querySelector("details")?.querySelector("summary")?.textContent).toBe(
     "Technical details",
   );
   expect(jsonEl.querySelector("details")?.open).toBe(false);
 });
 
+test("Why? value can be copied without hiding the text", () => {
+  const el = renderInspector(baseNode({ payload: { decision: "retry" } }));
+  const why = whySection(el);
+  const decision = [...why.querySelectorAll("dt")].find((n) => n.textContent === "Decision");
+  const value = decision?.nextElementSibling;
+  expect(value?.textContent).toContain("retry");
+  expect(value?.querySelector("button")?.textContent).toBe("Copy");
+  expect(value?.querySelector("button")?.getAttribute("aria-label")).toBe("Copy Decision");
+});
+
 test("Why? stringifies non-scalar allowlisted values", () => {
   const el = renderInspector(baseNode({ payload: { evidence: { sources: 7 } } }));
   const evidenceDt = [...el.querySelectorAll("dt")].find((n) => n.textContent === "Evidence");
-  expect(evidenceDt?.nextElementSibling?.textContent).toBe('{"sources":7}');
+  expect(evidenceDt?.nextElementSibling?.querySelector(".why-value")?.textContent).toBe('{"sources":7}');
 });
 
 test("Details heading and missing selection copy", () => {

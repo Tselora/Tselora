@@ -1,13 +1,15 @@
 :root {
   font-family: ui-sans-serif, system-ui, sans-serif;
-  color: #1c1917;
-  background: #f4f3f0;
+  color: #14202b;
+  background: #e7edf2;
   line-height: 1.45;
-  --ink: #1c1917;
-  --muted: #57534e;
-  --line: #e4e2dc;
+  --bg: #e7edf2;
+  --ink: #14202b;
+  --muted: #526170;
+  --line: #d3dee6;
   --panel: #ffffff;
-  --accent: #1d4e89;
+  --accent: #0c5c63;
+  --accent-soft: #e5f3f4;
 }
 
 body {
@@ -28,7 +30,8 @@ h4 {
 
 h1 {
   margin: 0;
-  font-size: 1.45rem;
+  font-size: 1.35rem;
+  color: var(--accent);
 }
 
 h2 {
@@ -40,6 +43,15 @@ h2 {
   max-width: 1280px;
   margin: 0 auto;
   padding: 1.5rem;
+}
+
+.explorer-chrome {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
+  border-radius: 12px;
+  padding: 0.9rem 1rem 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .explorer-chrome form {
@@ -641,8 +653,8 @@ tbody tr.selected:hover {
   padding: 0.32rem 0.7rem;
   border: 1px solid #c9d3e2;
   border-radius: 6px;
-  background: #f4f7fb;
-  color: #1d4e89;
+  background: var(--accent-soft);
+  color: var(--accent);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
@@ -789,7 +801,61 @@ tbody tr.selected:hover {
 .why .kv dd {
   min-width: 0;
   margin-inline: 0;
+}
+
+.why-value {
+  min-width: 0;
   overflow-wrap: break-word;
+}
+
+.copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.35rem 0.5rem;
+}
+
+.copy-button {
+  flex: 0 0 auto;
+  padding: 0.12rem 0.45rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: #b7d6d8;
+}
+
+.recent-runs {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.05rem 0.4rem;
+}
+
+.recent-runs ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.recent-runs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.recent-runs a {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.recent-runs a:hover {
+  color: var(--accent);
 }
 
 @container (max-width: 20rem) {

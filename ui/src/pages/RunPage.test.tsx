@@ -74,3 +74,40 @@ test("explorer composition: header, flow+timeline main, executions+details rail"
   expect(executions!.compareDocumentPosition(details as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   expect(el.querySelector(".explorer-main")).not.toBeNull();
 });
+
+test("home lists recent runs and keeps run-id entry in the chrome", async () => {
+  mockSession = {
+    runId: undefined,
+    state: null,
+    status: "error",
+    error: null,
+    view: "live",
+    throughSequence: null,
+    tipLastSequence: 0,
+    showHistorical: () => undefined,
+    showLive: () => undefined,
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => [{ run_id: "run_recent", status: "completed", last_sequence: 2 }],
+    }),
+  );
+  const el = document.createElement("div");
+  document.body.appendChild(el);
+  await act(async () => {
+    createRoot(el).render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route path="/" element={<RunPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+  });
+  expect(el.querySelector(".recent-runs")?.textContent).toContain("run_recent");
+  expect(el.querySelector(".recent-runs")?.textContent).toContain("Completed");
+  expect(el.querySelector("form")?.textContent).toContain("Open by run id");
+  expect(el.querySelector(".recent-runs button")?.getAttribute("aria-label")).toBe("Copy run_recent");
+});

@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { postComparison, RestError } from "../api/rest";
+import { CopyButton } from "../components/CopyButton";
 import { isSafeRunId } from "../api/safeId";
 import type {
   ComparisonDocument,
@@ -72,12 +73,14 @@ function ComparisonView({ doc }: { doc: ComparisonDocument }) {
             <code>{doc.comparison_id}</code>
           </dd>
           <dt>left_run_id</dt>
-          <dd>
+          <dd className="copy-row">
             <Link to={`/runs/${encodeURIComponent(doc.left_run_id)}`}>{doc.left_run_id}</Link>
+            <CopyButton value={doc.left_run_id} label="Copy left run id" />
           </dd>
           <dt>right_run_id</dt>
-          <dd>
+          <dd className="copy-row">
             <Link to={`/runs/${encodeURIComponent(doc.right_run_id)}`}>{doc.right_run_id}</Link>
+            <CopyButton value={doc.right_run_id} label="Copy right run id" />
           </dd>
           <dt>completeness</dt>
           <dd>{doc.completeness}</dd>
@@ -295,8 +298,23 @@ function ComparisonView({ doc }: { doc: ComparisonDocument }) {
             <>
               <dt>structure_fingerprint</dt>
               <dd>
-                left={formatValue(doc.experience.structure_fingerprint.left)} right=
-                {formatValue(doc.experience.structure_fingerprint.right)} (
+                left={formatValue(doc.experience.structure_fingerprint.left)}{" "}
+                {typeof doc.experience.structure_fingerprint.left === "string" &&
+                doc.experience.structure_fingerprint.left.length > 0 ? (
+                  <CopyButton
+                    value={doc.experience.structure_fingerprint.left}
+                    label="Copy left structure fingerprint"
+                  />
+                ) : null}{" "}
+                right={formatValue(doc.experience.structure_fingerprint.right)}{" "}
+                {typeof doc.experience.structure_fingerprint.right === "string" &&
+                doc.experience.structure_fingerprint.right.length > 0 ? (
+                  <CopyButton
+                    value={doc.experience.structure_fingerprint.right}
+                    label="Copy right structure fingerprint"
+                  />
+                ) : null}{" "}
+                (
                 {doc.experience.structure_fingerprint.equal ? "equal" : "changed"})
                 {typeof doc.experience.structure_fingerprint.left === "string" &&
                 doc.experience.structure_fingerprint.left.length > 0 ? (

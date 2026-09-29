@@ -24,6 +24,45 @@ export type CommandDeliveryResult = {
   run_id: string;
 };
 
+export type RunSummary = {
+  run_id: string;
+  status: string | null;
+  last_sequence: number;
+};
+
+export async function getRunList(limit = 50): Promise<RunSummary[]> {
+  let response: Response;
+  try {
+    response = await fetch(`/v1/runs?limit=${encodeURIComponent(String(limit))}`);
+  } catch {
+    throw new RestError("network error fetching runs");
+  }
+  if (!response.ok) {
+    throw new RestError(`GET /v1/runs failed (${response.status})`, response.status);
+  }
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    throw new RestError("malformed run list");
+  }
+  if (!Array.isArray(body) || !body.every(isRunSummary)) {
+    throw new RestError("malformed run list");
+  }
+  return body;
+}
+
+function isRunSummary(value: unknown): value is RunSummary {
+  if (!isRecord(value)) {
+    return false;
+  }
+  return (
+    typeof value.run_id === "string" &&
+    (value.status === null || typeof value.status === "string") &&
+    typeof value.last_sequence === "number"
+  );
+}
+
 export async function getRun(
   runId: string,
   opts?: { throughSequence?: number },

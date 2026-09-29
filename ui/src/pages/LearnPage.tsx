@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { getExperience, queryExperiences, RestError } from "../api/rest";
+import { CopyButton } from "../components/CopyButton";
 import { isSafeRunId } from "../api/safeId";
 import {
   buildExperienceQuery,
@@ -31,8 +32,9 @@ function CohortList({
         const isAnchor = experience.experience_id === anchor.experience_id;
         return (
           <li key={experience.experience_id}>
-            <p>
+            <p className="copy-row">
               <code>{experience.run_id}</code>
+              <CopyButton value={experience.run_id} label={`Copy ${experience.run_id}`} />
               {isAnchor ? <span data-testid="anchor-marker"> anchor</span> : null}
             </p>
             <dl className="kv">
@@ -199,14 +201,16 @@ export function LearnPage() {
               <code>{anchor.experience_id}</code>
             </dd>
             <dt>run_id</dt>
-            <dd>
+            <dd className="copy-row">
               <Link to={`/runs/${encodeURIComponent(anchor.run_id)}`}>{anchor.run_id}</Link>
+              <CopyButton value={anchor.run_id} label="Copy run id" />
             </dd>
             <dt>status</dt>
             <dd>{anchor.status}</dd>
             <dt>structure_fingerprint</dt>
-            <dd>
+            <dd className="copy-row">
               <code>{anchor.structure_fingerprint}</code>
+              <CopyButton value={anchor.structure_fingerprint} label="Copy structure fingerprint" />
             </dd>
             <dt>instance_count</dt>
             <dd>{anchor.instance_count}</dd>

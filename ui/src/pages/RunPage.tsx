@@ -1,6 +1,8 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { getRunList, type RunSummary } from "../api/rest";
+import { CopyButton } from "../components/CopyButton";
 import { ExecutionGraph } from "../components/ExecutionGraph";
 import { LineageChrome } from "../components/LineageChrome";
 import { NodeInspector } from "../components/NodeInspector";
@@ -9,7 +11,54 @@ import { ReplayScrubber } from "../components/ReplayScrubber";
 import { RunHeader } from "../components/RunHeader";
 import { Timeline } from "../components/Timeline";
 import { nodeByInstanceId, resolveSelection, timelineForInstance } from "../inspect/selection";
+import { humanizeStatus } from "../present";
 import { useRunSession } from "../state/runSession";
+
+function RecentRuns() {
+  const [runs, setRuns] = useState<RunSummary[] | null>(null);
+  const [unavailable, setUnavailable] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    getRunList()
+      .then((rows) => {
+        if (!cancelled) {
+          setRuns(rows);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUnavailable(true);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <section className="recent-runs" aria-label="Recent runs">
+      <h2>Recent runs</h2>
+      {unavailable ? <p className="muted">Recent runs are unavailable.</p> : null}
+      {runs != null && runs.length === 0 ? <p className="muted">No runs on this collector yet.</p> : null}
+      {runs != null && runs.length > 0 ? (
+        <ul>
+          {runs.map((run) => (
+            <li key={run.run_id}>
+              <Link to={`/runs/${encodeURIComponent(run.run_id)}`}>
+                <code>{run.run_id}</code>
+              </Link>
+              <span className={`status-badge status-badge-${(run.status ?? "unknown").toLowerCase()}`}>
+                {humanizeStatus(run.status)}
+              </span>
+              <CopyButton value={run.run_id} label={`Copy ${run.run_id}`} />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
 
 export function RunPage() {
   const { runId } = useParams();
@@ -47,7 +96,7 @@ export function RunPage() {
         <h1>Tselora</h1>
         <form onSubmit={onSubmit}>
           <label>
-            run_id
+            Open by run id
             <input value={draft} onChange={(e) => setDraft(e.target.value)} />
           </label>
           <button type="submit">Open</button>
@@ -66,7 +115,7 @@ export function RunPage() {
             </Link>
           )}
         </p>
-        {session.error ? <p className="muted">{session.error}</p> : null}
+        {runId && session.error ? <p className="muted">{session.error}</p> : null}
       </header>
       {session.state ? (
         <>
@@ -121,7 +170,11 @@ export function RunPage() {
           </div>
         </>
       ) : (
-        <p className="muted">Load a run to see projected state.</p>
+        runId ? (
+          <p className="muted">Load a run to see projected state.</p>
+        ) : (
+          <RecentRuns />
+        )
       )}
     </main>
   );

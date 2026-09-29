@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 
 import { executionPresentation, humanizeStatus } from "../present";
+import { CopyButton } from "./CopyButton";
 import type { NodeState, TimelineEntry } from "../types/projection";
 
 const WHY_FIELDS: { key: string; label: string }[] = [
@@ -75,7 +76,10 @@ export function NodeInspector({
                 {why.map((row) => (
                   <Fragment key={row.label}>
                     <dt>{row.label}</dt>
-                    <dd>{row.value}</dd>
+                    <dd className="copy-row">
+                      <span className="why-value">{row.value}</span>
+                      <CopyButton value={row.value} label={`Copy ${row.label}`} />
+                    </dd>
                   </Fragment>
                 ))}
               </dl>

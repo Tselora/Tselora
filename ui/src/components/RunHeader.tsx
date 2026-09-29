@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { postCommand, type ControlCommandType, RestError } from "../api/rest";
 import type { NodeState, RunState, TimelineState } from "../types/projection";
+import { CopyButton } from "./CopyButton";
 import { LiveBadge } from "./LiveBadge";
 import { humanizeStatus, runDisplayName } from "../present";
 
@@ -60,6 +61,15 @@ export function RunHeader({
         <LiveBadge view={view} status={status} />
       </p>
       <dl className="kv">
+        {run.run_id ? (
+          <>
+            <dt>run_id</dt>
+            <dd className="copy-row">
+              <code>{run.run_id}</code>
+              <CopyButton value={run.run_id} label="Copy run id" />
+            </dd>
+          </>
+        ) : null}
         <dt>Status</dt>
         <dd>
           <span className={`status-badge status-badge-${(run.status ?? "unknown").toLowerCase()}`}>
