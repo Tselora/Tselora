@@ -99,7 +99,7 @@ def main() -> None:
     with run() as run_id:
         print(f"run_id={run_id}")
         research()
-        print(f"events: .agent-devtools/runs/{run_id}/events.jsonl")
+        print("events: .agent-devtools/tselora.sqlite")
 
 
 if __name__ == "__main__":

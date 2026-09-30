@@ -1,4 +1,4 @@
-"""OTEL tracer → Tselora SpanProcessor → collector JSONL.
+"""OTEL tracer → Tselora SpanProcessor → collector SQLite.
 
 Requires: pip install "tselora[otel]"
 

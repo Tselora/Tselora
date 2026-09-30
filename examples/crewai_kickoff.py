@@ -1,4 +1,4 @@
-"""CrewAI kickoff → Tselora event-bus listener → collector JSONL.
+"""CrewAI kickoff → Tselora event-bus listener → collector SQLite.
 
 Requires: pip install "tselora[crewai]"
 

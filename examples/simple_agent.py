@@ -1,4 +1,4 @@
-"""Minimal agent: decorated tool → HTTP collector → JSONL.
+"""Minimal agent: decorated tool → HTTP collector → SQLite.
 
 Terminal 1:
     tselora serve
@@ -21,7 +21,7 @@ def main() -> None:
     with run() as run_id:
         print(f"run_id={run_id}")
         print(search_web("Tselora"))
-        print(f"events: .agent-devtools/runs/{run_id}/events.jsonl")
+        print("events: .agent-devtools/tselora.sqlite")
 
 
 if __name__ == "__main__":

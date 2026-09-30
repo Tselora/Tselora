@@ -1,4 +1,4 @@
-"""OpenAI Agents SDK Runner → Tselora RunHooks → collector JSONL.
+"""OpenAI Agents SDK Runner → Tselora RunHooks → collector SQLite.
 
 Requires: pip install "tselora[openai-agents]"
 

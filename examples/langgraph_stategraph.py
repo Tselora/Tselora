@@ -1,4 +1,4 @@
-"""LangGraph StateGraph → Tselora callback handler → collector JSONL.
+"""LangGraph StateGraph → Tselora callback handler → collector SQLite.
 
 Requires: pip install "tselora[langgraph]"
 
