@@ -10,7 +10,7 @@ Tselora reconstructs AI-agent executions into a deterministic execution model so
 
 It is **not** an agent framework or orchestrator. It sits beside agents you already run.
 
-**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.13**. Implementation source is distributed on PyPI; this repository holds usage examples, Explorer, and the demo GIF.
+**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.14**. Implementation source is distributed on PyPI; this repository holds usage examples, Explorer, and the demo GIF.
 
 ![Tselora product demo: agent execution, reconstructed topology and structured decisions, Experience, deterministic comparison, and exact-structure historical cohort](https://raw.githubusercontent.com/Tselora/Tselora/main/docs/assets/tselora-demo.gif)
 
@@ -59,7 +59,7 @@ Agent / framework
         ↓
 Execution events (Universal Agent Event Protocol)
         ↓
-Local collector → event log (JSONL today)
+Local collector → event log (SQLite)
         ↓
 ProjectionEngine
         ↓
@@ -70,7 +70,7 @@ Experience / reproduction lineage / comparison / Learn query
 REST + WebSocket + Explorer (`ui/`)
 ```
 
-- The **event log** is authoritative. The shipped store is JSONL. Local SQLite is the locked next default and is not in this package. No database server is required.
+- The **event log** is authoritative. The default store is local SQLite (`tselora.sqlite`). JSONL remains a compatibility log; `tselora import-jsonl` copies it into SQLite and does not rewrite the files. No database server is required.
 - **ProjectionEngine** is the semantic interpreter (the client does not invent graph semantics).
 - **Experience** is derived from terminal projected state; it is not a second event log.
 - **Comparison** rebuilds both runs and diffs projected state (plus optional Experience).
@@ -78,7 +78,7 @@ REST + WebSocket + Explorer (`ui/`)
 
 ## Supported integrations
 
-Verified extras on `tselora` 0.1.13. Adapters are first-slice and **lossy**; they are not zero-config.
+Verified extras on `tselora` 0.1.14. Adapters are first-slice and **lossy**; they are not zero-config.
 
 | Integration | Extra | Status |
 | --- | --- | --- |
@@ -92,7 +92,7 @@ Google ADK and other stacks are not claimed here.
 
 ## Quick start
 
-Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.13**.
+Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.14**.
 
 ```bash
 git clone https://github.com/Tselora/Tselora.git
@@ -189,9 +189,9 @@ Learn v0 retrieves historical Experiences that share the exact same `structure_f
 
 ## Implemented vs deferred
 
-**In `tselora` 0.1.13**
+**In `tselora` 0.1.14**
 
-- Event protocol, local collector, JSONL EventStore
+- Event protocol, local collector, SQLite EventStore, `tselora import-jsonl`
 - ProjectionEngine, REST, WebSocket patches
 - Structured Why? keys, cooperative control APIs
 - Experience extract/query, comparison, checkpoint/fork helpers
@@ -201,7 +201,6 @@ Learn v0 retrieves historical Experiences that share the exact same `structure_f
 
 - Autonomous optimization / “Learn how to improve the agent”
 - Embeddings or vector similarity
-- Local SQLite as the default EventStore (architecture locked; not in 0.1.13). JSONL remains the shipped store
 - Hosted/cloud Tselora, authentication, multi-tenancy
 - Generic re-execution of arbitrary agents
 - Zero-config / zero-touch framework integration
