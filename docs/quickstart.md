@@ -1,6 +1,6 @@
 # Quick start
 
-Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.14**.
+Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.15**.
 
 Same workflow as the [README](../README.md#quick-start):
 

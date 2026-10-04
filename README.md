@@ -10,7 +10,7 @@ Tselora reconstructs AI-agent executions into a deterministic execution model so
 
 It is **not** an agent framework or orchestrator. It sits beside agents you already run.
 
-**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.14**. Implementation source is distributed on PyPI; this repository holds usage examples, Explorer, and the demo GIF.
+**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.15**. Implementation source is distributed on PyPI; this repository holds usage examples, Explorer, and the demo GIF.
 
 ![Tselora product demo: agent execution, reconstructed topology and structured decisions, Experience, deterministic comparison, and exact-structure historical cohort](https://raw.githubusercontent.com/Tselora/Tselora/main/docs/assets/tselora-demo.gif)
 
@@ -78,7 +78,7 @@ REST + WebSocket + Explorer (`ui/`)
 
 ## Supported integrations
 
-Verified extras on `tselora` 0.1.14. Adapters are first-slice and **lossy**; they are not zero-config.
+Verified extras on `tselora` 0.1.15. Adapters are first-slice and **lossy**; they are not zero-config.
 
 | Integration | Extra | Status |
 | --- | --- | --- |
@@ -92,7 +92,7 @@ Google ADK and other stacks are not claimed here.
 
 ## Quick start
 
-Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.14**.
+Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.15**.
 
 ```bash
 git clone https://github.com/Tselora/Tselora.git
@@ -160,7 +160,7 @@ from adapters.otel.processor import TseloraSpanProcessor  # extra tselora[otel]
 from core.events.types import EventType
 ```
 
-`import tselora` is not the public SDK surface in 0.1.14. That is packaging, not a second product.
+`import tselora` is not the public SDK surface in 0.1.15. That is packaging, not a second product.
 
 ## Explorer
 
@@ -177,6 +177,7 @@ REST remains available for the same collector:
 | Events | `GET /v1/runs/{run_id}/events` |
 | Experience | `GET /v1/experiences/exp_{run_id}` |
 | Learn (exact structure) | `POST /v1/experiences/query` |
+| Near-miss (derived) | `GET /v1/near-misses` |
 | Compare two runs | `POST /v1/comparisons` |
 | Live patches | WebSocket `/v1/runs/{run_id}/ws` (Explorer on :5173 proxies `/v1` to the collector) |
 
@@ -200,14 +201,17 @@ Tselora can record `checkpoint.created` and fork lineage (`parent_run_id` / `chi
 
 Learn v0 retrieves historical Experiences that share the exact same `structure_fingerprint` (`POST /v1/experiences/query`). Results are deterministic, exact-match, read-only, and preserve server order. No embeddings, semantic similarity, ranking, recommendations, or automatic optimization.
 
+`GET /v1/near-misses` is a **derived** read over reconstructed runs (failed instance of a logical node, later completed instance of the same logical node, completed run). It is not a second event log and not a near-miss table. Explorer does not yet have a Near-Miss page. Optional `structure_fingerprint` / `experience_id` come from the current Experience document when it matches the projection.
+
 ## Implemented vs deferred
 
-**In `tselora` 0.1.14**
+**In `tselora` 0.1.15**
 
 - Event protocol, local collector, SQLite EventStore, `tselora import-jsonl`
 - ProjectionEngine, REST, WebSocket patches
 - Structured Why? keys, cooperative control APIs
 - Experience extract/query, comparison, checkpoint/fork helpers
+- Exact-structure Learn query; derived near-miss list (`GET /v1/near-misses`)
 - First-slice adapters: OTEL, LangGraph, OpenAI Agents SDK, CrewAI
 
 **Intentionally deferred**

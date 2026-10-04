@@ -24,6 +24,6 @@ Explorer (`ui/`, not in the PyPI wheel)
 
 **Experience.** After a run is terminal, the collector may derive an Experience document. The log remains authoritative.
 
-**Comparison / Learn.** Comparison rebuilds two projections. Learn queries Experiences by exact `structure_fingerprint` (Explorer: `/learn?run_id=`). Both are derived read models; neither is a second event log.
+**Comparison / Learn / Near-miss.** Comparison rebuilds two projections. Learn queries Experiences by exact `structure_fingerprint` (Explorer: `/learn?run_id=`). Near-misses are derived at read time (`GET /v1/near-misses`) from projection, not stored as events. None of these is a second event log.
 
 Local-first: no database server or message broker is required. The collector uses SQLite in the data directory.
