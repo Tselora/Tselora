@@ -107,11 +107,11 @@ export function RunPage() {
           </Link>
           {runId ? (
             <Link className="product-action" to={`/learn?run_id=${encodeURIComponent(runId)}`}>
-              Exact structure cohort
+              Learn
             </Link>
           ) : (
             <Link className="product-action" to="/learn">
-              Exact structure cohort
+              Learn
             </Link>
           )}
         </p>
@@ -171,7 +171,11 @@ export function RunPage() {
         </>
       ) : (
         runId ? (
-          <p className="muted">Load a run to see projected state.</p>
+          <p className="muted">
+            {session.status === "loading"
+              ? "Loading projected state…"
+              : "No projected state for this run_id yet."}
+          </p>
         ) : (
           <RecentRuns />
         )

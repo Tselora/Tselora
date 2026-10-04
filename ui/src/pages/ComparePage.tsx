@@ -324,7 +324,7 @@ function ComparisonView({ doc }: { doc: ComparisonDocument }) {
                       className="product-action"
                       to={`/learn?run_id=${encodeURIComponent(doc.left_run_id)}`}
                     >
-                      Exact structure cohort (left)
+                      Learn (left)
                     </Link>
                   </>
                 ) : null}
@@ -336,7 +336,7 @@ function ComparisonView({ doc }: { doc: ComparisonDocument }) {
                       className="product-action"
                       to={`/learn?run_id=${encodeURIComponent(doc.right_run_id)}`}
                     >
-                      Exact structure cohort (right)
+                      Learn (right)
                     </Link>
                   </>
                 ) : null}
@@ -457,7 +457,7 @@ export function ComparePage() {
       <header className="explorer-chrome">
         <h1>Tselora</h1>
         <p className="muted">
-          Compare — differences only.{" "}
+          Compare observable fields. Equal is a valid result.{" "}
           <Link to="/">Open a run</Link>
         </p>
         <form onSubmit={onSubmit}>

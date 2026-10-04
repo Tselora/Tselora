@@ -48,7 +48,7 @@ Observe → Explain → Control → Remember → Reproduce → Compare → Inter
 | **Reproduce** | Record checkpoints and parent/child fork lineage; the app owns restore. |
 | **Compare** | Deterministically compare two reconstructed executions (no winner/loser). |
 | **Interpret** | Present observable differences in Explorer (and via comparison REST). |
-| **Learn** | Retrieve Experiences with the same exact `structure_fingerprint`. |
+| **Learn** | Retrieve Experiences with the same exact `structure_fingerprint` (Explorer **Learn**). |
 
 Learn v0 is exact-match and read-only. It does **not** use embeddings, vector similarity, ranking, or autonomous optimization.
 
@@ -124,8 +124,8 @@ TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/research_retry.py
 
 Copy the printed `run_id`, then:
 
-1. Open `http://127.0.0.1:5173/runs/<run_id>` — graph, timeline, node inspector. Select **research** to see Why? (`decision=retry`, `failure_category=timeout`, …).
-2. Compare: run the example twice, then `http://127.0.0.1:5173/compare?left_run_id=<run_id>&right_run_id=<other_run_id>`.
+1. Open `http://127.0.0.1:5173/runs/<run_id>` — graph, timeline, inspector. **research** is selected when it is the only node with Why? fields (`decision=retry`, `failure_category=timeout`, …).
+2. Compare: run the example twice, then `http://127.0.0.1:5173/compare?left_run_id=<run_id>&right_run_id=<other_run_id>` (equal Why? keys are a valid result).
 3. Learn: `http://127.0.0.1:5173/learn?run_id=<run_id>` (exact `structure_fingerprint`; filter `decision=retry`).
 
 That is Execution → Why? → Experience → Compare → Learn. Smaller smoke: `examples/simple_agent.py`. Extra topology (loop / fan-out): `examples/structured_execution.py`.
@@ -139,6 +139,7 @@ Optional adapters (install the extra first): `examples/otel_spans.py`, `examples
 ```python
 from sdk import agent, node, run, tool
 
+# pip install tselora exposes sdk, adapters, and core — not import tselora.
 # research → plan, search_web (fail then retry), gather
 # After timeout, research emits Why?: decision=retry, selected_strategy=fallback_search, …
 
@@ -147,7 +148,19 @@ with run() as run_id:
     print(run_id)
 ```
 
-Full script: [examples/research_retry.py](examples/research_retry.py). More examples: [examples/README.md](examples/README.md).
+Full script: [examples/research_retry.py](examples/research_retry.py). More examples: [examples/README.md](examples/README.md). Adapter observation limits: [docs/integrations.md](docs/integrations.md).
+
+## Imports
+
+The PyPI distribution name is `tselora`. After `pip install tselora`, Python imports are:
+
+```python
+from sdk import run, tool, agent, node
+from adapters.otel.processor import TseloraSpanProcessor  # extra tselora[otel]
+from core.events.types import EventType
+```
+
+`import tselora` is not the public SDK surface in 0.1.14. That is packaging, not a second product.
 
 ## Explorer
 
@@ -165,7 +178,7 @@ REST remains available for the same collector:
 | Experience | `GET /v1/experiences/exp_{run_id}` |
 | Learn (exact structure) | `POST /v1/experiences/query` |
 | Compare two runs | `POST /v1/comparisons` |
-| Live patches | WebSocket on the collector (see `tselora serve` / package `server.ws`) |
+| Live patches | WebSocket `/v1/runs/{run_id}/ws` (Explorer on :5173 proxies `/v1` to the collector) |
 
 Health: `http://127.0.0.1:8000/health`.
 

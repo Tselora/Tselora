@@ -165,7 +165,7 @@ export function LearnPage() {
       <header className="explorer-chrome">
         <h1>Tselora</h1>
         <p className="muted">
-          Which prior terminal executions have this exact structure?{" "}
+          Learn — exact structure_fingerprint cohort (GET Experience, then POST /v1/experiences/query).{" "}
           <Link to="/">Open a run</Link>
           {" · "}
           <Link className="product-action" to="/compare">
@@ -190,7 +190,7 @@ export function LearnPage() {
         {error ? <p className="compare-error">{error}</p> : null}
       </header>
 
-      {!runParam ? <p className="muted">Set run_id to load an exact structure cohort.</p> : null}
+      {!runParam ? <p className="muted">Set run_id to load Learn (exact structure cohort).</p> : null}
 
       {anchor ? (
         <section className="compare-section" data-testid="learn-anchor">

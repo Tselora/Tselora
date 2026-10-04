@@ -5,10 +5,7 @@ Requires `pip install tselora` and a running collector (`tselora serve`).
 - `research_retry.py` — canonical quickstart: `research` → plan, failed then retried `search_web`, gather, plus structured Why? on `research`.
 - `simple_agent.py` — one decorated tool (minimal smoke).
 - `structured_execution.py` — sequential nodes, retry, loop, sibling fan-out, and a failed-then-retried tool using ordinary Python control flow.
-- `otel_spans.py` — OpenTelemetry tracer via `TseloraSpanProcessor` (`pip install "tselora[otel]"`).
-- `langgraph_stategraph.py` — compiled `StateGraph` via `TseloraLangGraphCallbackHandler` (`pip install "tselora[langgraph]"`). First slice only.
-- `openai_agents_runner.py` — `Runner.run_sync` + scripted model via `TseloraAgentsRunHooks` (`pip install "tselora[openai-agents]"`). First slice only.
-- `crewai_kickoff.py` — sequential one-task `Crew.kickoff()` via `TseloraCrewAIEventListener` (`pip install "tselora[crewai]"`). First slice only.
+- `otel_spans.py`, `langgraph_stategraph.py`, `openai_agents_runner.py`, `crewai_kickoff.py` — first-slice adapters (`run.*` / `node.*` only; no Why?). See [docs/integrations.md](../docs/integrations.md).
 
 ```bash
 tselora serve

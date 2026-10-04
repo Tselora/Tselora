@@ -6,7 +6,7 @@ This public repository holds **examples, Explorer (`ui/`), and documentation**. 
 
 1. Fork and clone this repository.
 2. `python -m venv .venv && source .venv/bin/activate`
-3. `pip install tselora` (add extras if you touch an adapter example).
+3. `pip install tselora` (add extras if you touch an adapter example). Import `sdk` / `adapters` / `core`, not `import tselora`.
 4. `tselora serve` and run the example you changed.
 5. For Explorer: `cd ui && npm install && npm test` (and `npm run dev` to look at a run).
 6. Open a pull request with a short description.

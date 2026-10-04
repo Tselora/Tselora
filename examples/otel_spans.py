@@ -7,6 +7,8 @@ Terminal 1:
 
 Terminal 2:
     TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/otel_spans.py
+
+Maps to run.* / node.* only. Does not emit Why? fields. Open the printed run in Explorer.
 """
 
 from __future__ import annotations
@@ -32,11 +34,13 @@ def main() -> None:
     provider.add_span_processor(processor)
     tracer = trace.get_tracer("tselora.example", tracer_provider=provider)
     with tracer.start_as_current_span("research") as root:
-        print(f"run_id=run_{format(root.get_span_context().trace_id, '032x')}")
+        run_id = f"run_{format(root.get_span_context().trace_id, '032x')}"
+        print(f"run_id={run_id}")
         with tracer.start_as_current_span("search_web"):
             pass
         with tracer.start_as_current_span("search_web") as failed:
             failed.set_status(Status(StatusCode.ERROR))
+    print(f"explorer: http://127.0.0.1:5173/runs/{run_id}")
     emitter.flush()
     emitter.close()
 

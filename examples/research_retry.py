@@ -99,7 +99,7 @@ def main() -> None:
     with run() as run_id:
         print(f"run_id={run_id}")
         research()
-        print("events: .agent-devtools/tselora.sqlite")
+        print(f"explorer: http://127.0.0.1:5173/runs/{run_id}")
 
 
 if __name__ == "__main__":

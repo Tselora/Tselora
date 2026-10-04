@@ -70,7 +70,7 @@ test("LearnPage prompts for run_id and does not call the API", () => {
   const fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
   const el = renderAt("/learn");
-  expect(el.textContent).toContain("Set run_id to load an exact structure cohort");
+  expect(el.textContent).toContain("Set run_id to load Learn (exact structure cohort)");
   expect(fetchMock).not.toHaveBeenCalled();
 });
 

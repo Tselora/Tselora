@@ -1,6 +1,6 @@
 # Learn (exact structure cohorts)
 
-Learn v0 is a read-only query over Experiences:
+Learn v0 is a **read-only** query over existing Experience documents. Explorer `/learn?run_id=` loads `GET /v1/experiences/exp_<run_id>` then `POST /v1/experiences/query` with that document’s `structure_fingerprint`. There is no Learn store.
 
 ```bash
 curl -sS -X POST http://127.0.0.1:8000/v1/experiences/query \

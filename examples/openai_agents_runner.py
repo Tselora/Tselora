@@ -11,8 +11,10 @@ Terminal 1 — collector:
 Terminal 2 — this example:
     TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/openai_agents_runner.py
 
-Inspect the run:
+Inspect the run in Explorer (`http://127.0.0.1:5173/runs/{run_id}`) or:
     curl -sS http://127.0.0.1:8000/v1/runs/{run_id}
+
+This adapter maps to run.* / node.* only. It does not emit structured Why? fields.
 """
 
 from __future__ import annotations
@@ -47,7 +49,7 @@ def main() -> None:
     emitter.flush()
     emitter.close()
     print(f"run_id={run_id}")
-    print(f"projection: http://127.0.0.1:8000/v1/runs/{run_id}")
+    print(f"explorer: http://127.0.0.1:5173/runs/{run_id}")
 
 
 if __name__ == "__main__":

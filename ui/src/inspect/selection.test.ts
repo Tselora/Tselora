@@ -58,3 +58,19 @@ test("selection is cleared when the instance is gone after a patch", () => {
   expect(resolveSelection([node("i2")], "i1")).toBeNull();
   expect(resolveSelection([node("i1"), node("i2")], "i1")).toBe("i1");
 });
+
+test("empty selection prefers the single instance that carries Why? keys", () => {
+  const plan = node("plan#1");
+  const research = node("research#1");
+  research.payload = { decision: "retry", action: "retry_search" };
+  expect(resolveSelection([plan, research], null)).toBe("research#1");
+});
+
+test("empty selection stays empty when zero or several instances carry Why?", () => {
+  expect(resolveSelection([node("a"), node("b")], null)).toBeNull();
+  const left = node("a");
+  const right = node("b");
+  left.payload = { decision: "retry" };
+  right.payload = { decision: "continue" };
+  expect(resolveSelection([left, right], null)).toBeNull();
+});
