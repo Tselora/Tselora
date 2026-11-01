@@ -14,4 +14,4 @@ Matching is **exact** on `structure_fingerprint` (and any other filters you send
 
 `GET /v1/near-misses` lists completed runs in which a logical step failed and a later attempt of that same step completed. The collector rebuilds projections and derives the list. There is no near-miss table and no new event type. When an Experience is current, the record may copy `structure_fingerprint` and `experience_id`; those fields are omitted if Experience is missing or stale.
 
-This is not a Learn store and not a reliability-map UI. Explorer has no Near-Miss page in this release.
+This is not a Learn store and not a reliability-map UI. Explorer `/near-misses` loads the same endpoint (optional filters as query params).

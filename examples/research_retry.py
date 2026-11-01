@@ -24,7 +24,8 @@ Terminal 3:
 
 Open the printed ``run_id`` in Explorer, select ``research``, and inspect Why?.
 Run twice for Compare (``left_run_id`` / ``right_run_id``) and Learn
-(``?run_id=``; filter ``decision=retry``).
+(``?run_id=``; filter ``decision=retry``). Near-miss lists the failed then
+recovered ``search_web`` instances (``/near-misses?run_id=``).
 """
 
 from __future__ import annotations

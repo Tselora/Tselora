@@ -459,6 +459,14 @@ export function ComparePage() {
         <p className="muted">
           Compare observable fields. Equal is a valid result.{" "}
           <Link to="/">Open a run</Link>
+          {" · "}
+          <Link className="product-action" to="/learn">
+            Learn
+          </Link>
+          {" · "}
+          <Link className="product-action" to="/near-misses">
+            Near-miss
+          </Link>
         </p>
         <form onSubmit={onSubmit}>
           <label>

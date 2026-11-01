@@ -127,8 +127,9 @@ Copy the printed `run_id`, then:
 1. Open `http://127.0.0.1:5173/runs/<run_id>` — graph, timeline, inspector. **research** is selected when it is the only node with Why? fields (`decision=retry`, `failure_category=timeout`, …).
 2. Compare: run the example twice, then `http://127.0.0.1:5173/compare?left_run_id=<run_id>&right_run_id=<other_run_id>` (equal Why? keys are a valid result).
 3. Learn: `http://127.0.0.1:5173/learn?run_id=<run_id>` (exact `structure_fingerprint`; filter `decision=retry`).
+4. Near-miss: `http://127.0.0.1:5173/near-misses?run_id=<run_id>` (derived failed-then-recovered logical step).
 
-That is Execution → Why? → Experience → Compare → Learn. Smaller smoke: `examples/simple_agent.py`. Extra topology (loop / fan-out): `examples/structured_execution.py`.
+That is Execution → Why? → Experience → Compare → Learn → Near-miss. Smaller smoke: `examples/simple_agent.py`. Extra topology (loop / fan-out): `examples/structured_execution.py`.
 
 Collector flags: `tselora serve --host 127.0.0.1 --port 8000 --data-dir .agent-devtools`.
 
@@ -177,7 +178,7 @@ REST remains available for the same collector:
 | Events | `GET /v1/runs/{run_id}/events` |
 | Experience | `GET /v1/experiences/exp_{run_id}` |
 | Learn (exact structure) | `POST /v1/experiences/query` |
-| Near-miss (derived) | `GET /v1/near-misses` |
+| Near-miss (derived) | `GET /v1/near-misses` (Explorer `/near-misses`) |
 | Compare two runs | `POST /v1/comparisons` |
 | Live patches | WebSocket `/v1/runs/{run_id}/ws` (Explorer on :5173 proxies `/v1` to the collector) |
 
@@ -201,7 +202,7 @@ Tselora can record `checkpoint.created` and fork lineage (`parent_run_id` / `chi
 
 Learn v0 retrieves historical Experiences that share the exact same `structure_fingerprint` (`POST /v1/experiences/query`). Results are deterministic, exact-match, read-only, and preserve server order. No embeddings, semantic similarity, ranking, recommendations, or automatic optimization.
 
-`GET /v1/near-misses` is a **derived** read over reconstructed runs (failed instance of a logical node, later completed instance of the same logical node, completed run). It is not a second event log and not a near-miss table. Explorer does not yet have a Near-Miss page. Optional `structure_fingerprint` / `experience_id` come from the current Experience document when it matches the projection.
+`GET /v1/near-misses` is a **derived** read over reconstructed runs (failed instance of a logical node, later completed instance of the same logical node, completed run). It is not a second event log and not a near-miss table. Explorer `/near-misses` lists that envelope (optional `run_id`, `logical_node_id`, `failure_category`, `structure_fingerprint` query params). Optional `structure_fingerprint` / `experience_id` come from the current Experience document when it matches the projection.
 
 ## Implemented vs deferred
 

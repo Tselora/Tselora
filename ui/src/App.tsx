@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import { ComparePage } from "./pages/ComparePage";
 import { LearnPage } from "./pages/LearnPage";
+import { NearMissPage } from "./pages/NearMissPage";
 import { RunPage } from "./pages/RunPage";
 
 export function App() {
@@ -10,6 +11,7 @@ export function App() {
       <Route path="/runs/:runId" element={<RunPage />} />
       <Route path="/compare" element={<ComparePage />} />
       <Route path="/learn" element={<LearnPage />} />
+      <Route path="/near-misses" element={<NearMissPage />} />
       <Route path="/" element={<RunPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -114,6 +114,15 @@ export function RunPage() {
               Learn
             </Link>
           )}
+          {runId ? (
+            <Link className="product-action" to={`/near-misses?run_id=${encodeURIComponent(runId)}`}>
+              Near-miss
+            </Link>
+          ) : (
+            <Link className="product-action" to="/near-misses">
+              Near-miss
+            </Link>
+          )}
         </p>
         {runId && session.error ? <p className="muted">{session.error}</p> : null}
       </header>

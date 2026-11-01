@@ -12,4 +12,4 @@ tselora serve
 TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/research_retry.py
 ```
 
-Then open `http://127.0.0.1:5173/runs/<run_id>` (Explorer: `cd ui && npm install && npm run dev`) or `GET http://127.0.0.1:8000/v1/runs/<run_id>`.
+Then open `http://127.0.0.1:5173/runs/<run_id>` (Explorer: `cd ui && npm install && npm run dev`) or `GET http://127.0.0.1:8000/v1/runs/<run_id>`. Near-miss: `/near-misses?run_id=<run_id>`.

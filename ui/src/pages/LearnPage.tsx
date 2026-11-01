@@ -171,6 +171,10 @@ export function LearnPage() {
           <Link className="product-action" to="/compare">
             Compare runs
           </Link>
+          {" · "}
+          <Link className="product-action" to="/near-misses">
+            Near-miss
+          </Link>
         </p>
         <form onSubmit={onOpenRun}>
           <label>

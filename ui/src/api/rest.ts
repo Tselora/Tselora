@@ -2,6 +2,8 @@ import type { ComparisonDocument } from "../types/comparison";
 import { isComparisonDocument } from "../types/comparison";
 import type { Experience, ExperienceQueryBody } from "../types/experience";
 import { isExperience, isExperienceList } from "../types/experience";
+import type { NearMissList, NearMissQuery } from "../types/nearMiss";
+import { buildNearMissQueryString, isNearMissList } from "../types/nearMiss";
 import type { ProjectionState } from "../types/projection";
 
 export class RestError extends Error {
@@ -149,6 +151,30 @@ export async function queryExperiences(body: ExperienceQueryBody): Promise<Exper
     throw new RestError("malformed experience query response");
   }
   return parsed;
+}
+
+export async function getNearMisses(query: NearMissQuery = {}): Promise<NearMissList> {
+  let response: Response;
+  const params = buildNearMissQueryString(query);
+  try {
+    response = await fetch(`/v1/near-misses${params}`);
+  } catch {
+    throw new RestError("network error fetching near-misses");
+  }
+  if (!response.ok) {
+    const detail = await readErrorDetail(response);
+    throw new RestError(detail ?? `GET /v1/near-misses failed (${response.status})`, response.status);
+  }
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    throw new RestError("malformed near-miss response");
+  }
+  if (!isNearMissList(body)) {
+    throw new RestError("malformed near-miss response");
+  }
+  return body;
 }
 
 export async function postComparison(
