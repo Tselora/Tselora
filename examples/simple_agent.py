@@ -9,7 +9,7 @@ Terminal 2:
 
 from __future__ import annotations
 
-from sdk import run, tool
+from tselora import run, tool
 
 
 @tool(name="search_web")

@@ -138,9 +138,8 @@ Optional adapters (install the extra first): `examples/otel_spans.py`, `examples
 ## Example
 
 ```python
-from sdk import agent, node, run, tool
+from tselora import agent, node, run, tool
 
-# pip install tselora exposes sdk, adapters, and core — not import tselora.
 # research → plan, search_web (fail then retry), gather
 # After timeout, research emits Why?: decision=retry, selected_strategy=fallback_search, …
 
@@ -153,15 +152,15 @@ Full script: [examples/research_retry.py](examples/research_retry.py). More exam
 
 ## Imports
 
-The PyPI distribution name is `tselora`. After `pip install tselora`, Python imports are:
+The PyPI distribution name is `tselora`. After `pip install tselora` **0.1.16+**, the public import is:
 
 ```python
-from sdk import run, tool, agent, node
-from adapters.otel.processor import TseloraSpanProcessor  # extra tselora[otel]
-from core.events.types import EventType
+from tselora import run, tool, agent, node
+from tselora.adapters.otel.processor import TseloraSpanProcessor  # extra tselora[otel]
+from tselora.core.events.types import EventType
 ```
 
-`import tselora` is not the public SDK surface in 0.1.15. That is packaging, not a second product.
+Top-level `from sdk import …` / `from adapters…` / `from core…` still work as compatibility aliases. They are not a second product.
 
 ## Explorer
 

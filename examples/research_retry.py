@@ -30,9 +30,7 @@ recovered ``search_web`` instances (``/near-misses?run_id=``).
 
 from __future__ import annotations
 
-from core.context import require_context
-from core.events.types import EventType
-from sdk import agent, get_emitter, node, run, tool
+from tselora import EventType, agent, get_emitter, node, require_context, run, tool
 
 _search_calls = 0
 

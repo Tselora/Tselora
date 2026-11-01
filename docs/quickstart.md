@@ -27,6 +27,6 @@ Open `http://127.0.0.1:5173/runs/<run_id>` (Why? auto-selects **research** when 
 
 The collector writes SQLite under `.agent-devtools/tselora.sqlite` unless you pass `--data-dir` or `TSELOA_DATA_DIR`. `tselora import-jsonl` copies an older `runs/<run_id>/events.jsonl` tree into that database and leaves the JSONL files in place.
 
-`pip install tselora` then `from sdk import …` (not `import tselora`). See the README Imports section.
+`pip install tselora` then `from tselora import run, tool` (`from sdk import …` still works). See the README Imports section.
 
 See [examples/README.md](../examples/README.md) and [ui/README.md](../ui/README.md).

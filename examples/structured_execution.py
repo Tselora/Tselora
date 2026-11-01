@@ -13,7 +13,7 @@ Terminal 2:
 
 from __future__ import annotations
 
-from sdk import agent, node, run, tool
+from tselora import agent, node, run, tool
 
 _search_calls = 0
 

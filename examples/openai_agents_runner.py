@@ -25,11 +25,14 @@ from agents import Agent, Runner
 from agents.run import RunConfig
 from agents.testing import ScriptedModel, assistant_message
 
-from adapters.openai_agents.hooks import TseloraAgentsRunHooks
-from core.events.ids import new_run_id
-from sdk.batcher import EventBatcher
-from sdk.emitter import EventEmitter
-from sdk.transport import DEFAULT_COLLECTOR_URL, CollectorTransport
+from tselora import (
+    CollectorTransport,
+    DEFAULT_COLLECTOR_URL,
+    EventBatcher,
+    EventEmitter,
+    new_run_id,
+)
+from tselora.adapters.openai_agents.hooks import TseloraAgentsRunHooks
 
 
 def main() -> None:

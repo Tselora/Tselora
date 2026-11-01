@@ -20,10 +20,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.trace import Status, StatusCode
 
-from adapters.otel.processor import TseloraSpanProcessor
-from sdk.batcher import EventBatcher
-from sdk.emitter import EventEmitter
-from sdk.transport import DEFAULT_COLLECTOR_URL, CollectorTransport
+from tselora import CollectorTransport, DEFAULT_COLLECTOR_URL, EventBatcher, EventEmitter
+from tselora.adapters.otel.processor import TseloraSpanProcessor
 
 
 def main() -> None:
