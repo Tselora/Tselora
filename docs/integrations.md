@@ -25,16 +25,16 @@ pip install "tselora[langgraph]"
 ## What they do not do
 
 - They do **not** emit `tool.*`, `llm.*`, `plan.*`, `retry.*`, or `loop.*` from framework kinds or vendor attributes.
-- They do **not** emit structured Why? fields. Why? appears only when the native SDK (or your code) puts allowlisted keys on an instance payload. Adapter examples will show graph/timeline without Why?.
+- They **do** copy **allowlisted Why? keys** onto `node.completed` / `node.failed` when those keys are already present on LangGraph node outputs or metadata, OTEL span attributes, OpenAI Agents run `context`, or CrewAI kickoff `inputs` (including nested `tselora.why`). Failures also set coarse `failure_category` (`timeout` / `error`). Prompts, completions, and other fields are dropped. This is still lossy: adapters do not invent hidden reasoning.
 - They do **not** rewrite your graph, crew, or runner. Attaching the adapter is required.
 - They do **not** replace OpenTelemetry or vendor APM.
 
 ## First-slice observation boundary
 
-- **OTEL:** `SpanProcessor` `on_start` / `on_end`. Root span → `run.*`; child span → `node.*`. Span kind and `gen_ai.*` attributes are not promoted to other event types. Prompts, completions, and tool arguments/results are not Why? fields.
-- **LangGraph:** callbacks on a compiled `StateGraph` (`config["callbacks"]` / `with_config`). `invoke` / `stream` first slice. LLM callbacks are ignored (`ignore_llm`). Not subgraph/Send/async as a separate mapping. Node functions are not rewritten.
-- **OpenAI Agents SDK:** `RunHooks` on `Runner.run` / `run_sync`. First slice is a single agent. The example uses `ScriptedModel` and `tracing_disabled=True` (no API key).
-- **CrewAI:** `BaseEventListener` on the process event bus. First slice is sequential `kickoff()`, one crew / one agent / one task. The example uses a scripted `BaseLLM` (no API key).
+- **OTEL:** `SpanProcessor` `on_start` / `on_end`. Root span → `run.*`; child span → `node.*`. Span kind and `gen_ai.*` attributes are not promoted to other event types. Allowlisted Why? keys on span attributes are copied onto node payloads; prompts are not.
+- **LangGraph:** callbacks on a compiled `StateGraph` (`config["callbacks"]` / `with_config`). `invoke` / `stream` first slice. LLM callbacks are ignored (`ignore_llm`). Not subgraph/Send/async as a separate mapping. Node functions are not rewritten. Dict node outputs may contribute Why? keys.
+- **OpenAI Agents SDK:** `RunHooks` on `Runner.run` / `run_sync`. First slice is a single agent. The example uses `ScriptedModel` and `tracing_disabled=True` (no API key). Why? keys may come from run `context`.
+- **CrewAI:** `BaseEventListener` on the process event bus. First slice is sequential `kickoff()`, one crew / one agent / one task. The example uses a scripted `BaseLLM` (no API key). Why? keys may come from kickoff `inputs`.
 
 Google ADK and other stacks are not claimed.
 

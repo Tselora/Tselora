@@ -14,7 +14,7 @@ Terminal 2 — this example:
 Inspect the run in Explorer (`http://127.0.0.1:5173/runs/{run_id}`) or:
     curl -sS http://127.0.0.1:8000/v1/runs/{run_id}
 
-This adapter maps to run.* / node.* only. It does not emit structured Why? fields.
+Maps to run.* / node.*. Kickoff inputs may include nested tselora.why (allowlisted keys only).
 """
 
 from __future__ import annotations
@@ -68,7 +68,15 @@ def main() -> None:
         process=Process.sequential,
         verbose=False,
     )
-    crew.kickoff()
+    crew.kickoff(
+        inputs={
+            "tselora.why": {
+                "decision": "answer",
+                "selected_strategy": "scripted",
+                "action": "complete_task",
+            }
+        }
+    )
     emitter.flush()
     emitter.close()
     _ = listener

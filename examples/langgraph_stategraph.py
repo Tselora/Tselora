@@ -15,7 +15,7 @@ Terminal 2 — this example:
 Inspect the run in Explorer (`http://127.0.0.1:5173/runs/{run_id}`) or:
     curl -sS http://127.0.0.1:8000/v1/runs/{run_id}
 
-This adapter maps to run.* / node.* only. It does not emit structured Why? fields.
+Maps to run.* / node.*. Allowlisted Why? keys on the node return (not prompts) are copied onto node.completed.
 """
 
 from __future__ import annotations
@@ -37,7 +37,12 @@ class State(TypedDict):
 
 
 def research(state: State) -> State:
-    return {"topic": state["topic"]}
+    return {
+        "topic": state["topic"],
+        "decision": "continue",
+        "selected_strategy": "single_node",
+        "action": "complete_research",
+    }
 
 
 def main() -> None:

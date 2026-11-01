@@ -14,7 +14,7 @@ Terminal 2 — this example:
 Inspect the run in Explorer (`http://127.0.0.1:5173/runs/{run_id}`) or:
     curl -sS http://127.0.0.1:8000/v1/runs/{run_id}
 
-This adapter maps to run.* / node.* only. It does not emit structured Why? fields.
+Maps to run.* / node.*. Allowlisted Why? keys on run context are copied onto node.completed.
 """
 
 from __future__ import annotations
@@ -44,6 +44,7 @@ def main() -> None:
         agent,
         "hello",
         hooks=hooks,
+        context={"decision": "answer", "action": "respond", "selected_strategy": "scripted"},
         run_config=RunConfig(tracing_disabled=True),
     )
     emitter.flush()
