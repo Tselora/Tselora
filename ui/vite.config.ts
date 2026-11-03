@@ -1,8 +1,11 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
-const collector =
-  process.env.TSELOA_COLLECTOR_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000";
+const collector = (
+  process.env.TSELORA_COLLECTOR_URL ||
+  process.env.TSELOA_COLLECTOR_URL ||
+  "http://127.0.0.1:8000"
+).replace(/\/$/, "");
 
 export default defineConfig({
   plugins: [react()],

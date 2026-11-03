@@ -9,7 +9,7 @@ Terminal 1 — collector:
     tselora serve
 
 Terminal 2 — this example:
-    TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/openai_agents_runner.py
+    TSELORA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/openai_agents_runner.py
 
 Inspect the run in Explorer (`http://127.0.0.1:5173/runs/{run_id}`) or:
     curl -sS http://127.0.0.1:8000/v1/runs/{run_id}
@@ -36,7 +36,11 @@ from tselora.adapters.openai_agents.hooks import TseloraAgentsRunHooks
 
 
 def main() -> None:
-    base = os.environ.get("TSELOA_COLLECTOR_URL", DEFAULT_COLLECTOR_URL)
+    base = (
+        os.environ.get("TSELORA_COLLECTOR_URL")
+        or os.environ.get("TSELOA_COLLECTOR_URL")
+        or DEFAULT_COLLECTOR_URL
+    )
     emitter = EventEmitter(EventBatcher(CollectorTransport(base_url=base)))
     run_id = new_run_id()
     hooks = TseloraAgentsRunHooks(emitter, run_id=run_id)
