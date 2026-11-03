@@ -6,7 +6,7 @@ Terminal 1:
     tselora serve
 
 Terminal 2:
-    TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/otel_spans.py
+    TSELORA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/otel_spans.py
 
 Maps to run.* / node.*. Child span attributes may carry allowlisted Why? keys; error status sets failure_category.
 """
@@ -25,7 +25,11 @@ from tselora.adapters.otel.processor import TseloraSpanProcessor
 
 
 def main() -> None:
-    base = os.environ.get("TSELOA_COLLECTOR_URL", DEFAULT_COLLECTOR_URL)
+    base = (
+        os.environ.get("TSELORA_COLLECTOR_URL")
+        or os.environ.get("TSELOA_COLLECTOR_URL")
+        or DEFAULT_COLLECTOR_URL
+    )
     emitter = EventEmitter(EventBatcher(CollectorTransport(base_url=base)))
     processor = TseloraSpanProcessor(emitter)
     provider = TracerProvider(resource=Resource.create({"service.name": "otel-example"}))

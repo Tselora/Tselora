@@ -2,7 +2,7 @@
 
 Install extras from PyPI. Each adapter **translates** framework activity into Tselora `run.*` / `node.*` events **before** ingest. Framework objects do not become the core model. Tselora owns `event_id` and per-run `sequence`. Adapters are **lossy** and **not zero-config**: you construct the handler/processor/listener and attach it.
 
-`pip install tselora` **0.1.16+** exposes `from tselora import run, tool`. `sdk`, `adapters`, and `core` remain top-level compatibility aliases (`from tselora.adapters…` is the same adapters package).
+`pip install tselora` **0.1.16** exposes `from tselora import run, tool`. `sdk`, `adapters`, and `core` remain top-level compatibility aliases (`from tselora.adapters…` is the same adapters package).
 
 | Extra | Entry point | Example |
 | --- | --- | --- |

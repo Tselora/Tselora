@@ -10,7 +10,7 @@ Tselora reconstructs AI-agent executions into a deterministic execution model so
 
 It is **not** an agent framework or orchestrator. It sits beside agents you already run.
 
-**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.15**. Implementation source is distributed on PyPI; this repository holds usage examples, Explorer, and the demo GIF.
+**Python package:** [`tselora`](https://pypi.org/project/tselora/) **0.1.16**. Implementation source is distributed on PyPI; this repository holds usage examples, Explorer, and the demo GIF.
 
 ![Tselora product demo: agent execution, reconstructed topology and structured decisions, Experience, deterministic comparison, and exact-structure historical cohort](https://raw.githubusercontent.com/Tselora/Tselora/main/docs/assets/tselora-demo.gif)
 
@@ -78,7 +78,7 @@ REST + WebSocket + Explorer (`ui/`)
 
 ## Supported integrations
 
-Verified extras on `tselora` 0.1.15. Adapters are first-slice and **lossy**; they are not zero-config.
+Verified extras on `tselora` 0.1.16. Adapters are first-slice and **lossy**; they are not zero-config.
 
 | Integration | Extra | Status |
 | --- | --- | --- |
@@ -92,7 +92,7 @@ Google ADK and other stacks are not claimed here.
 
 ## Quick start
 
-Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.15**.
+Python **3.12+**, Node.js **20+**. Package: [`tselora`](https://pypi.org/project/tselora/) **0.1.16**.
 
 ```bash
 git clone https://github.com/Tselora/Tselora.git
@@ -119,7 +119,7 @@ npm run dev
 Terminal 3 — canonical example (retry + Why?):
 
 ```bash
-TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/research_retry.py
+TSELORA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/research_retry.py
 ```
 
 Copy the printed `run_id`, then:
@@ -138,10 +138,52 @@ Optional adapters (install the extra first): `examples/otel_spans.py`, `examples
 ## Example
 
 ```python
-from tselora import agent, node, run, tool
+from tselora import EventType, agent, get_emitter, node, require_context, run, tool
 
-# research → plan, search_web (fail then retry), gather
-# After timeout, research emits Why?: decision=retry, selected_strategy=fallback_search, …
+_search_calls = 0
+
+
+@tool(name="search_web")
+def search_web(query: str) -> str:
+    global _search_calls
+    _search_calls += 1
+    if _search_calls == 1:
+        raise TimeoutError("search timed out")
+    return f"results for {query}"
+
+
+@node(name="plan")
+def plan() -> None:
+    return None
+
+
+@node(name="gather")
+def gather() -> None:
+    return None
+
+
+@agent(name="research")
+def research() -> None:
+    plan()
+    try:
+        search_web("Tselora")
+    except TimeoutError:
+        ctx = require_context()
+        get_emitter().emit(
+            EventType.AGENT_COMPLETED,
+            status="completed",
+            payload={
+                "decision": "retry",
+                "selected_strategy": "fallback_search",
+                "failure_category": "timeout",
+                "action": "retry_search",
+            },
+            execution_instance_id=ctx.current_execution_instance_id(),
+            ctx=ctx,
+        )
+        search_web("Tselora")
+    gather()
+
 
 with run() as run_id:
     research()
@@ -152,7 +194,7 @@ Full script: [examples/research_retry.py](examples/research_retry.py). More exam
 
 ## Imports
 
-The PyPI distribution name is `tselora`. After `pip install tselora` **0.1.16+**, the public import is:
+The PyPI distribution name is `tselora`. After `pip install tselora` **0.1.16**, the public import is:
 
 ```python
 from tselora import run, tool, agent, node
@@ -166,7 +208,7 @@ Top-level `from sdk import …` / `from adapters…` / `from core…` still work
 
 This repository’s `ui/` app is Explorer. The PyPI wheel does **not** bundle it; `tselora serve` is collector-only.
 
-Vite listens on **5173** and proxies `/v1` (including WebSocket) to `TSELOA_COLLECTOR_URL` or `http://127.0.0.1:8000`. See [ui/README.md](ui/README.md).
+Vite listens on **5173** and proxies `/v1` (including WebSocket) to `TSELORA_COLLECTOR_URL` or `http://127.0.0.1:8000`. See [ui/README.md](ui/README.md).
 
 REST remains available for the same collector:
 
@@ -205,7 +247,7 @@ Learn v0 retrieves historical Experiences that share the exact same `structure_f
 
 ## Implemented vs deferred
 
-**In `tselora` 0.1.15**
+**In `tselora` 0.1.16**
 
 - Event protocol, local collector, SQLite EventStore, `tselora import-jsonl`
 - ProjectionEngine, REST, WebSocket patches

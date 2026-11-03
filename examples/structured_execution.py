@@ -8,12 +8,32 @@ Terminal 1:
     tselora serve
 
 Terminal 2:
-    TSELOA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/structured_execution.py
+    TSELORA_COLLECTOR_URL=http://127.0.0.1:8000 python examples/structured_execution.py
 """
 
 from __future__ import annotations
 
-from tselora import agent, node, run, tool
+import os
+
+from tselora import (
+    CollectorTransport,
+    DEFAULT_COLLECTOR_URL,
+    EventBatcher,
+    EventEmitter,
+    agent,
+    configure_emitter,
+    node,
+    run,
+    tool,
+)
+
+
+def _collector_url() -> str:
+    return (
+        os.environ.get("TSELORA_COLLECTOR_URL")
+        or os.environ.get("TSELOA_COLLECTOR_URL")
+        or DEFAULT_COLLECTOR_URL
+    )
 
 _search_calls = 0
 
@@ -73,6 +93,7 @@ def research() -> None:
 
 
 def main() -> None:
+    configure_emitter(EventEmitter(EventBatcher(CollectorTransport(_collector_url()))))
     reset_search_attempts()
     with run() as run_id:
         print(f"run_id={run_id}")
